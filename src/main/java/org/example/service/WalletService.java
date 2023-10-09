@@ -42,10 +42,11 @@ public class WalletService {
             Player newPlayer = new Player(username, password);
             players.put(username, newPlayer);
             System.out.println("Привет, " + username + ". Вы успешно зарегистрировались.");
-            audit(username, "Регистрация");
+            audit(username, "Регистрация", "SUCCESS");
             return true;
         } else {
-            System.out.println("Игрок с именем " + username + " уже существует. Повторите попытку, вызовите заново команду регистрации!");
+            System.out.println("Пользователь с именем " + username + " уже существует. Повторите попытку, вызовите заново команду регистрации!");
+            audit(username, "Регистрация", "FAIL");
             return false;
         }
     }
@@ -60,10 +61,11 @@ public class WalletService {
         Player player = players.get(username);
         if (player != null && player.getPassword().equals(password)) {
             System.out.println("Вы успешно вошли в систему.");
-            audit(username, "Авторизация");
+            audit(username, "Авторизация", "SUCCESS");
             return true;
         } else {
             System.out.println("Ошибка авторизации. Пожалуйста, проверьте имя пользователя и пароль.");
+            audit(username, "Авторизация", "FAIL");
             return false;
         }
     }
@@ -76,10 +78,11 @@ public class WalletService {
     public double getBalance(String username) {
         Player player = players.get(username);
         if (player != null) {
-            audit(username, "Получение баланса");
+            audit(username, "Получение баланса", "SUCCESS");
             return player.getBalance();
         } else {
-            System.out.println("Игрок с именем " + username + " не найден.");
+            System.out.println("Пользователь с именем " + username + " не найден.");
+            audit(username, "Получение баланса", "FAIL");
             return -1.0;
         }
     }
@@ -100,6 +103,7 @@ public class WalletService {
                 // Проверка уникальности идентификатора транзакции
                 if (transactions.containsKey(transactionId)) {
                     System.out.println("Транзакция с таким идентификатором уже существует.");
+                    audit(username, "Дебетовая транзакция", "FAIL");
                     return false;
                 }
 
@@ -107,15 +111,17 @@ public class WalletService {
                 player.getTransactionHistory().add(transaction);
                 player.setBalance(player.getBalance() - amount);
                 transactions.put(transactionId, transaction);
-                audit(username, "Дебетовая транзакция");
+                audit(username, "Дебетовая транзакция", "SUCCESS");
                 System.out.println("Дебетовая транзакция успешно выполнена.");
                 return true;
             } else {
                 System.out.println("Недостаточно средств для выполнения дебетовой транзакции.");
+                audit(username, "Дебетовая транзакция", "FAIL");
                 return false;
             }
         } else {
             System.out.println("Пользователь с именем " + username + " не найден.");
+            audit(username, "Дебетовая транзакция", "FAIL");
             return false;
         }
     }
@@ -132,18 +138,20 @@ public class WalletService {
         if (player != null) {
             if (transactions.containsKey(transactionId)) {
                 System.out.println("Транзакция с таким идентификатором уже существует.");
+                audit(username, "Кредитная транзакция", "FAIL");
                 return false;
             } else {
                 Transaction transaction = new Transaction(transactionId, "credit", amount);
                 player.getTransactionHistory().add(transaction);
                 player.setBalance(player.getBalance() + amount);
                 transactions.put(transactionId, transaction);
-                audit(username, "Кредитная транзакция");
                 System.out.println("Кредитная транзакция успешно выполнена.");
+                audit(username, "Кредитная транзакция", "SUCCESS");
                 return true;
             }
         } else {
-            System.out.println("Игрок с именем " + username + " не найден.");
+            System.out.println("Пользователь с именем " + username + " не найден.");
+            audit(username, "Кредитная транзакция", "FAIL");
             return false;
         }
     }
@@ -159,22 +167,25 @@ public class WalletService {
             List<Transaction> history = player.getTransactionHistory();
             if (history != null) { // Проверка на null перед вызовом isEmpty()
                 if (history.isEmpty()) {
-                    System.out.println("У игрока " + username + " нет истории транзакций.");
+                    System.out.println("У пользователя " + username + " нет истории транзакций.");
+                    audit(username, "Просмотр истории транзакций", "FAIL");
                     return 0;
                 } else {
                     System.out.println("История транзакций для пользователя " + username + ":");
                     for (Transaction transaction : history) {
                         System.out.println("Идентификатор транзакции: " + transaction.getId() + " | " + transaction.getType() + " " + transaction.getAmount());
                     }
-                    audit(username, "Просмотр истории транзакций");
+                    audit(username, "Просмотр истории транзакций", "SUCCESS");
                     return history.size();
                 }
             } else {
                 System.out.println("История транзакций игрока " + username + " не инициализирована.");
+                audit(username, "Просмотр истории транзакций", "FAIL");
                 return -1;
             }
         } else {
-            System.out.println("Игрок с именем " + username + " не найден.");
+            System.out.println("Пользователь с именем " + username + " не найден.");
+            audit(username, "Просмотр истории транзакций", "FAIL");
             return 0;
         }
     }
@@ -195,8 +206,8 @@ public class WalletService {
      * @param username Имя игрока.
      * @param action Действие, которое было выполнено.
      */
-    public void audit(String username, String action) {
-        String s = "Игрок " + username + ": " + action;
+    public void audit(String username, String action, String result) {
+        String s = "Пользователь " + username + ": " + action + " | " + result;
         audits.add(s);
     }
 }

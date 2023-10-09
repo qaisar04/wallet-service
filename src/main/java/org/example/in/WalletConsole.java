@@ -2,6 +2,7 @@ package org.example.in;
 
 import org.example.service.WalletService;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -32,8 +33,14 @@ public class WalletConsole {
                 System.out.println("2. Авторизация");
                 System.out.println("_______________________________");
 
-                int choice = scanner.nextInt();
-                scanner.nextLine();
+
+                int choice = 0;
+                try {
+                    choice = scanner.nextInt();
+                    scanner.nextLine();
+                } catch (InputMismatchException e) {
+                    scanner.nextLine(); // Очищаем буфер ввода
+                }
 
                 switch (choice) {
                     case 1:
@@ -66,8 +73,13 @@ public class WalletConsole {
                 System.out.println("3. Выйти из приложения");
                 System.out.println("_______________________________");
 
-                int choice = scanner.nextInt();
-                scanner.nextLine();
+                int choice = 0;
+                try {
+                    choice = scanner.nextInt();
+                    scanner.nextLine();
+                } catch (InputMismatchException e) {
+                    scanner.nextLine(); // Очищаем буфер ввода
+                }
 
                 switch (choice) {
                     case 1:
@@ -96,8 +108,13 @@ public class WalletConsole {
                 System.out.println("6. Выйти из приложения");
                 System.out.println("_______________________________");
 
-                int choice = scanner.nextInt();
-                scanner.nextLine();
+                int choice = 0;
+                try {
+                    choice = scanner.nextInt();
+                    scanner.nextLine();
+                } catch (InputMismatchException e) {
+                    scanner.nextLine(); // Очищаем буфер ввода
+                }
 
                 switch (choice) {
                     case 1:

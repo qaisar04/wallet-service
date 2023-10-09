@@ -35,33 +35,36 @@ public class WalletServiceTest {
     @Test
     public void testDebit() throws Exception {
         assertTrue(walletService.registerPlayer("user1", "password1"));
-        assertTrue(walletService.credit("user1", "txn1", 100.0));
-        assertFalse(walletService.debit("user1", "txn1", 111.0));
-        assertFalse(walletService.debit("user2", "txn1", 50.0));
+        assertTrue(walletService.credit("user1", "3458237", 100.0));
+        assertFalse(walletService.debit("user1", "3458237", 111.0));
+        assertFalse(walletService.debit("user2", "3458237", 50.0));
     }
 
     @Test
     public void testCredit() {
         assertTrue(walletService.registerPlayer("user1", "password1"));
-        walletService.credit("user1", "txn1", 100.0);
+        walletService.credit("user1", "2546243", 100.0);
         assertEquals(100.0, walletService.getBalance("user1"));
     }
 
     @Test
     public void testDebitDuplicateTransactionId() throws Exception {
-        assertTrue(walletService.registerPlayer("user1", "password1"));
-        walletService.credit("user1", "txn1", 100.0);
-        walletService.debit("user1", "txn2", 10.0);
+        assertTrue(walletService.registerPlayer("user1", "password1")); // 1st audit
+        walletService.credit("user1", "73456456", 100.0); // 2nd audit
+        walletService.debit("user1", "5464564", 10.0); // 3rd audit
 
-        assertFalse(walletService.debit("user1", "txn1", 50.0));
-        assertFalse(walletService.credit("user1","txn2",500));
+        assertFalse(walletService.debit("user1", "73456456", 50.0)); // 4th audit
+        assertFalse(walletService.credit("user1","5464564",500)); // 5th audit
+
+        assertEquals(5, walletService.viewAllAudits());
+
     }
 
 
     @Test
     public void testViewTransactionHistory() {
         assertTrue(walletService.registerPlayer("user1", "password1"));
-        walletService.credit("user1", "txn1", 100.0);
+        walletService.credit("user1", "6453452", 100.0);
 
         assertEquals(1, walletService.viewTransactionHistory("user1"));
         assertEquals(0, walletService.viewTransactionHistory("nonexistentUser"));
@@ -71,7 +74,7 @@ public class WalletServiceTest {
     public void testViewAllAudits() throws Exception {
         assertTrue(walletService.registerPlayer("user1", "password1"));
         walletService.authenticatePlayer("user1", "password1");
-        walletService.credit("user1", "txn1", 50.0);
+        walletService.credit("user1", "75674", 50.0);
 
         assertEquals(3, walletService.viewAllAudits());
     }
