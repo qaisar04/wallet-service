@@ -1,8 +1,12 @@
 package org.example.in;
 
-import org.example.service.WalletService;
+import org.example.handler.AdminHandler;
+import org.example.handler.MainHandler;
+import org.example.handler.UserHandler;
+import org.example.service.WalletPlayerService;
+import org.example.service.WalletTransactionsService;
 
-import java.util.InputMismatchException;
+import java.math.BigDecimal;
 import java.util.Scanner;
 
 /**
@@ -12,143 +16,124 @@ import java.util.Scanner;
  */
 public class WalletConsole {
 
+    WalletPlayerService walletPlayerService;
+    WalletTransactionsService walletTransactionsService;
+
+    public WalletConsole() {
+        walletPlayerService = new WalletPlayerService();
+        walletTransactionsService = new WalletTransactionsService(walletPlayerService);
+    }
+
+    static String loggedInUsername = null; // username того, кто вошел
+    static boolean loggedIn = false; // для отслеживания авторизации
     Scanner scanner = new Scanner(System.in);
-    WalletService walletService = new WalletService();
-    String loggedInUsername = null; // username того, кто вошел
-    boolean loggedIn = false; // для отслеживания авторизации
 
     /**
      * Метод start запускает текстовый интерфейс для взаимодействия с кошельком.
      *
      * @throws Exception в случае возникновения исключений
      */
-    public void start() throws Exception {
-        Scanner scanner = new Scanner(System.in);
-
+    public void start(MainHandler mainHandler, UserHandler userHandler, AdminHandler adminHandler) {
         while (true) {
             if (!loggedIn) {
-                System.out.println("_______________________________");
-                System.out.println("Выберите действие:");
-                System.out.println("1. Регистрация");
-                System.out.println("2. Авторизация");
-                System.out.println("_______________________________");
-
-
-                int choice = 0;
-                try {
-                    choice = scanner.nextInt();
-                    scanner.nextLine();
-                } catch (InputMismatchException e) {
-                    scanner.nextLine(); // Очищаем буфер ввода
-                }
-
+                mainHandler.displayMainMenu();
+                int choice = userHandler.readChoice();
                 switch (choice) {
                     case 1:
                         System.out.print("Введите имя пользователя: ");
                         String username = scanner.nextLine();
                         System.out.print("Введите пароль: ");
                         String password = scanner.nextLine();
-                        walletService.registerPlayer(username, password);
+                        walletPlayerService.registerPlayer(username, password);
                         break;
                     case 2:
                         System.out.print("Введите имя пользователя: ");
-                        String authUsername = scanner.nextLine();
+                        String authenticateUsername = scanner.nextLine();
                         System.out.print("Введите пароль: ");
-                        String authPassword = scanner.nextLine();
-                        if (walletService.authenticatePlayer(authUsername, authPassword)) {
+                        String authenticatePassword = scanner.nextLine();
+                        if (walletPlayerService.authenticatePlayer(authenticateUsername, authenticatePassword)) {
                             loggedIn = true;
-                            loggedInUsername = authUsername;
+                            loggedInUsername = authenticateUsername;
                         }
+                        break;
+                    case 3:
+                        mainHandler.exitApplication();
                         break;
                     default:
                         System.out.println("Неверный выбор. Пожалуйста, выберите снова.");
                 }
-
             } else if ("admin".equals(loggedInUsername)) {
-                System.out.println("_______________________________");
-                System.out.println("Привет, Админ. Рад видеть вас!");
-                System.out.println("Выберите действие:");
-                System.out.println("1. Просмотр аудитов");
-                System.out.println("2. Выйти из аккаунта");
-                System.out.println("3. Выйти из приложения");
-                System.out.println("_______________________________");
-
-                int choice = 0;
-                try {
-                    choice = scanner.nextInt();
-                    scanner.nextLine();
-                } catch (InputMismatchException e) {
-                    scanner.nextLine(); // Очищаем буфер ввода
-                }
-
+                adminHandler.displayAdminMenu();
+                int choice = userHandler.readChoice();
                 switch (choice) {
                     case 1:
-                        walletService.viewAllAudits();
+                        walletTransactionsService.viewAllAudits();
                         break;
                     case 2:
-                        loggedIn = false;
-                        loggedInUsername = null;
-                        System.out.println("Выход из аккаунта.");
+                        userHandler.logout();
                         break;
                     case 3:
-                        System.out.println("Выход из приложения.");
-                        System.exit(0);
+                        mainHandler.exitApplication();
                         break;
                     default:
                         System.out.println("Неверный выбор. Пожалуйста, выберите снова.");
                 }
             } else if (loggedInUsername != null) {
-                System.out.println("_______________________________");
-                System.out.println("Выберите действие:");
-                System.out.println("1. Просмотр баланса");
-                System.out.println("2. Дебет");
-                System.out.println("3. Кредит");
-                System.out.println("4. История транзакций");
-                System.out.println("5. Выйти из аккаунта");
-                System.out.println("6. Выйти из приложения");
-                System.out.println("_______________________________");
-
-                int choice = 0;
-                try {
-                    choice = scanner.nextInt();
-                    scanner.nextLine();
-                } catch (InputMismatchException e) {
-                    scanner.nextLine(); // Очищаем буфер ввода
-                }
-
+                userHandler.displayUserMenu();
+                int choice = userHandler.readChoice();
                 switch (choice) {
                     case 1:
-                        double balance = walletService.getBalance(loggedInUsername);
+                        BigDecimal balance = walletPlayerService.getBalance(loggedInUsername);
                         System.out.println("Баланс игрока " + loggedInUsername + ": " + balance);
                         break;
                     case 2:
-                        System.out.print("Введите сумму дебета: ");
-                        double debitAmount = scanner.nextDouble();
-                        scanner.nextLine();
-                        System.out.print("Введите идентификатор транзакции: ");
-                        String debitTransactionId = scanner.nextLine();
-                        walletService.debit(loggedInUsername, debitTransactionId, debitAmount);
+                        userHandler.displayUserCreditAndDebet();
+                        int choiceDebetTransactionId = userHandler.readChoice();
+                        switch (choiceDebetTransactionId) {
+                            case 1:
+                                System.out.print("Введите сумму дебета: ");
+                                BigDecimal debetAmountTransactionId = scanner.nextBigDecimal();
+                                scanner.nextLine();
+                                System.out.print("Введите идентификатор транзакции: ");
+                                String transactionIdForCredit = scanner.nextLine();
+                                walletPlayerService.debitWithTransactionId(loggedInUsername, transactionIdForCredit, debetAmountTransactionId);
+                                break;
+                            case 2:
+                                System.out.print("Введите сумму дебета: ");
+                                BigDecimal debetAmount = scanner.nextBigDecimal();
+                                scanner.nextLine();
+                                walletPlayerService.debitWithoutTransactionId(loggedInUsername, debetAmount);
+                                break;
+                        }
                         break;
                     case 3:
-                        System.out.print("Введите сумму кредита: ");
-                        double creditAmount = scanner.nextDouble();
-                        scanner.nextLine();
-                        System.out.print("Введите идентификатор транзакции: ");
-                        String creditTransactionId = scanner.nextLine();
-                        walletService.credit(loggedInUsername, creditTransactionId, creditAmount);
+                        userHandler.displayUserCreditAndDebet();
+                        int choiceCreditTransactionId = userHandler.readChoice();
+                        switch (choiceCreditTransactionId) {
+                            case 1:
+                                System.out.print("Введите сумму кредита: ");
+                                BigDecimal creditAmountTransactionId = scanner.nextBigDecimal();
+                                scanner.nextLine();
+                                System.out.print("Введите идентификатор транзакции: ");
+                                String transactionIdForCredit = scanner.nextLine();
+                                walletPlayerService.creditWithTransactionId(loggedInUsername, transactionIdForCredit, creditAmountTransactionId);
+                                break;
+                            case 2:
+                                System.out.print("Введите сумму кредита: ");
+                                BigDecimal creditAmount = scanner.nextBigDecimal();
+                                scanner.nextLine();
+                                walletPlayerService.creditWithoutTransactionId(loggedInUsername, creditAmount);
+                                break;
+                        }
                         break;
-
                     case 4:
-                        walletService.viewTransactionHistory(loggedInUsername);
+                        walletTransactionsService.viewTransactionHistory(loggedInUsername);
                         break;
                     case 5:
-                        loggedIn = false;
-                        loggedInUsername = null;
-                        System.out.println("Выход из аккаунта.");
+                        userHandler.logout();
                         break;
                     case 6:
-                        System.out.println("Выход из приложения.");
-                        System.exit(0);
+                        mainHandler.exitApplication();
                         break;
                     default:
                         System.out.println("Неверный выбор. Пожалуйста, выберите снова.");
@@ -157,5 +142,13 @@ public class WalletConsole {
                 System.out.println("Вы не авторизованы. Войдите сначала в аккаунт.");
             }
         }
+    }
+
+    public void setLoggedInUsername(String loggedInUsername) {
+        this.loggedInUsername = loggedInUsername;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
     }
 }
