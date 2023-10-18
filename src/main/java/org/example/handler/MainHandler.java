@@ -2,28 +2,32 @@ package org.example.handler;
 
 
 /**
- * Класс `MainHandler` представляет собой обработчик для взаимодействия с главным меню
- * консольного интерфейса приложения. Он предоставляет функциональность, связанную с
- * отображением главного меню и обработкой действий, связанных с ним.
+ * The `Main Handler` class is a handler for interacting with the main menu of the
+ * application console interface. It provides functionality related to displaying
+ * the main menu and handling actions related to it.
  */
 public class MainHandler {
 
     /**
-     * Отображает главное меню приложения в консоли.
-     * Меню включает в себя список доступных действий для пользователя.
+     * Displays the main application menu in the console.
+     * The menu includes a list of available actions for the user.
      */
     public void displayMainMenu() {
-        System.out.println("╔═════════════════════════════════════════════════╗");
-        System.out.println("║         Выберите действие:                      ║");
-        System.out.println("║ 1. Регистрация                                  ║");
-        System.out.println("║ 2. Авторизация                                  ║");
-        System.out.println("║ 3. Выйти из приложения                          ║");
-        System.out.println("╚═════════════════════════════════════════════════╝");
 
+        String s = """
+                ════════════════════════════════════════════════════════════
+                | Выберите действие:
+                | 1. Регистрация
+                | 2. Авторизация
+                | 3. Выйти из приложения
+                ════════════════════════════════════════════════════════════
+                """;
+
+        System.out.println(s);
     }
 
     /**
-     * Завершает выполнение приложения.
+     * Completes the execution of the application.
      */
     public void exitApplication() {
         System.out.println("Выход из приложения.");

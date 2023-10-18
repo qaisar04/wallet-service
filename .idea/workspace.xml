@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="482593a7-fe08-4031-b2ca-3a42bee46e6f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/core/domain/Player.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/core/domain/Transaction.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/core/service/WalletPlayerService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/core/service/WalletTransactionsService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/managerTest/WalletPlayerServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/managerTest/WalletTransactionsServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/serviceTest/WalletAuditServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/entity/Player.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/entity/Transaction.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/handler/AdminHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/handler/AdminHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/handler/MainHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/handler/MainHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/handler/UserHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/handler/UserHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/in/WalletConsole.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/in/WalletConsole.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/WalletPlayerService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/WalletTransactionsService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/types/ActionType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/types/AuditType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/types/TransactionType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/WalletPlayerServiceTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/WalletTransactionsServiceTest.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <excluded-from-favorite>
+      <branch-storage>
+        <map>
+          <entry type="LOCAL">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="main" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </excluded-from-favorite>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/main/java/org/example/in/WalletConsole.java" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2WW1hgp72dBfTPGjEyhR9r3NHEB" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;database.data.extractors.current.export.id&quot;: &quot;CSV-Groovy.csv.groovy&quot;,
+    &quot;database.data.extractors.current.id&quot;: &quot;CSV-Groovy.csv.groovy&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;ylab__lab2&quot;,
+    &quot;last_directory_selection&quot;: &quot;/Users/qaisarbaltabay/Desktop/ylab_course/src/main/java/org/example/core&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/qaisarbaltabay/Desktop/ylab_course&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.gutterIcons&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
+    ],
+    &quot;com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect&quot;: [
+      &quot;PostgreSQL&quot;
+    ]
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources/db/changelog" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.example.exception" />
+      <recent name="org.example.liquibase" />
+      <recent name="org.example.service" />
+      <recent name="org.example.dao" />
+      <recent name="org.example.entity" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.TransactionDaoImplTest">
+    <configuration name="PlayerDaoImplTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="wallet-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.serviceTest.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.serviceTest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.serviceTest.PlayerDaoImplTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TransactionDaoImplTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="wallet-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.serviceTest.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.serviceTest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.serviceTest.TransactionDaoImplTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TransactionDaoImplTest.testFindByCustomId" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="wallet-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.serviceTest.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.serviceTest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.serviceTest.TransactionDaoImplTest" />
+      <option name="METHOD_NAME" value="testFindByCustomId" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TransactionDaoImplTest.testFindById" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="wallet-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.serviceTest.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.serviceTest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.serviceTest.TransactionDaoImplTest" />
+      <option name="METHOD_NAME" value="testFindById" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TransactionDaoImplTest.testUpdate" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="wallet-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.serviceTest.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.serviceTest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.serviceTest.TransactionDaoImplTest" />
+      <option name="METHOD_NAME" value="testUpdate" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.TransactionDaoImplTest" />
+        <item itemvalue="JUnit.TransactionDaoImplTest.testFindByCustomId" />
+        <item itemvalue="JUnit.TransactionDaoImplTest.testFindById" />
+        <item itemvalue="JUnit.TransactionDaoImplTest.testUpdate" />
+        <item itemvalue="JUnit.PlayerDaoImplTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="482593a7-fe08-4031-b2ca-3a42bee46e6f" name="Changes" comment="" />
+      <created>1696833645572</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1696833645572</updated>
+      <workItem from="1696833647208" duration="1598000" />
+      <workItem from="1696835359305" duration="915000" />
+      <workItem from="1696850449390" duration="6000" />
+      <workItem from="1696869255527" duration="633000" />
+      <workItem from="1696907939306" duration="272000" />
+      <workItem from="1696913803907" duration="1535000" />
+      <workItem from="1696924927593" duration="551000" />
+      <workItem from="1697009663263" duration="1841000" />
+      <workItem from="1697035678052" duration="10085000" />
+      <workItem from="1697095795980" duration="938000" />
+      <workItem from="1697096751275" duration="325000" />
+      <workItem from="1697097080326" duration="11399000" />
+      <workItem from="1697116272223" duration="9259000" />
+      <workItem from="1697176567152" duration="14327000" />
+      <workItem from="1697215778002" duration="72000" />
+      <workItem from="1697215854240" duration="884000" />
+      <workItem from="1697263463740" duration="634000" />
+      <workItem from="1697272374132" duration="52388000" />
+      <workItem from="1697508380773" duration="35410000" />
+      <workItem from="1697606363966" duration="22445000" />
+      <workItem from="1697632262410" duration="1802000" />
+      <workItem from="1697634081269" duration="5526000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.ExceptionInInitializerError" package="java.lang" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
