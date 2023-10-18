@@ -26,6 +26,8 @@
 
 - junit-jupiter
 - lombok
+- liquibase-core
+- postgresql
 
 ## Связаться со мной:
 

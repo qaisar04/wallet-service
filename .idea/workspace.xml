@@ -5,28 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="482593a7-fe08-4031-b2ca-3a42bee46e6f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/core/domain/Player.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/core/domain/Transaction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/core/service/WalletPlayerService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/core/service/WalletTransactionsService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/managerTest/WalletPlayerServiceTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/managerTest/WalletTransactionsServiceTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/serviceTest/WalletAuditServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/entity/Player.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/entity/Transaction.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/handler/AdminHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/handler/AdminHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/handler/MainHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/handler/MainHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/handler/UserHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/handler/UserHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/in/WalletConsole.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/in/WalletConsole.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/WalletPlayerService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/WalletTransactionsService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/types/ActionType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/types/AuditType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/types/TransactionType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/WalletPlayerServiceTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/WalletTransactionsServiceTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -251,7 +230,7 @@
       <workItem from="1697508380773" duration="35410000" />
       <workItem from="1697606363966" duration="22445000" />
       <workItem from="1697632262410" duration="1802000" />
-      <workItem from="1697634081269" duration="5526000" />
+      <workItem from="1697634081269" duration="5839000" />
     </task>
     <servers />
   </component>
