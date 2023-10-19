@@ -1,22 +1,16 @@
 package org.example.manager;
 
-import lombok.Getter;
-import lombok.SneakyThrows;
-import org.example.Main;
 import org.example.core.domain.Audit;
 import org.example.core.domain.Player;
 import org.example.core.domain.Transaction;
 import org.example.core.domain.types.ActionType;
 import org.example.core.domain.types.AuditType;
-import org.example.core.domain.types.TransactionType;
 import org.example.core.service.WalletAuditService;
 import org.example.core.service.WalletPlayerService;
 import org.example.core.service.WalletTransactionsService;
 import org.example.exception.TransactionException;
-import org.example.in.WalletConsole;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.*;
 
 import static org.example.core.domain.types.ActionType.*;
@@ -48,7 +42,7 @@ public class PlayerManager {
 
         if (existingPlayer.isEmpty()) {
             Player newPlayer = Player.builder()
-                    .fullName(username)
+                    .username(username)
                     .password(password)
                     .balance(BigDecimal.ZERO)
                     .build();

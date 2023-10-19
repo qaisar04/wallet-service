@@ -1,5 +1,6 @@
-package org.example.serviceTest;
+package org.example.daoImplTest;
 
+import org.example.config.ContainersEnvironment;
 import org.example.core.domain.Audit;
 import org.example.core.domain.types.ActionType;
 import org.example.core.domain.types.AuditType;
@@ -11,11 +12,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class WalletAuditServiceTest {
+public class AuditDaoImplTest extends ContainersEnvironment {
+
     private AuditDaoImpl auditDao;
-
-    // я не успел сделать тест контейнеры
 
     @BeforeEach
     public void setUp() {

@@ -47,20 +47,29 @@ public class WalletConsole {
                     case 1 -> {
                         System.out.print("Введите имя пользователя: ");
                         String username = scanner.nextLine();
-                        System.out.print("Введите пароль: ");
-                        String password = scanner.nextLine();
-                        if (!playerManager.registerPlayer(username, password)) {
+                        if(username.matches("^[a-zA-Zа-яА-Я]+$") && username.length() > 4) {
+                            System.out.print("Введите пароль: ");
+                            String password = scanner.nextLine();
+                            playerManager.registerPlayer(username, password);
+                        } else {
+                            System.err.println("Пожалуйста, введите имя пользователя, состоящее только из букв и длина которого превышает 4 букв.");
                             continue;
                         }
+
                     }
                     case 2 -> {
                         System.out.print("Введите имя пользователя: ");
                         String authenticateUsername = scanner.nextLine();
-                        System.out.print("Введите пароль: ");
-                        String authenticatePassword = scanner.nextLine();
-                        if (playerManager.authenticatePlayer(authenticateUsername, authenticatePassword)) {
-                            loggedIn = true;
-                            loggedInUsername = authenticateUsername;
+                        if(authenticateUsername.matches("^[a-zA-Zа-яА-Я]+$")) {
+                            System.out.print("Введите пароль: ");
+                            String authenticatePassword = scanner.nextLine();
+                            if (playerManager.authenticatePlayer(authenticateUsername, authenticatePassword)) {
+                                loggedIn = true;
+                                loggedInUsername = authenticateUsername;
+                            }
+                        } else {
+                            System.err.println("Пожалуйста, введите имя пользователя, состоящее только из букв.");
+                            continue;
                         }
                     }
                     case 3 -> {

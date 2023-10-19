@@ -1,5 +1,6 @@
-package org.example.serviceTest;
+package org.example.daoImplTest;
 
+import org.example.config.ContainersEnvironment;
 import org.example.core.domain.Player;
 import org.example.dao.impl.PlayerDaoImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,12 +12,13 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PlayerDaoImplTest {
-    private PlayerDaoImpl playerDao;
+public class PlayerDaoImplTest extends ContainersEnvironment {
+
+    PlayerDaoImpl playerDao;
     private Player testPlayer;
 
-    // я не успел сделать тест контейнеры
 
     @BeforeEach
     public void setUp() {
@@ -31,7 +33,7 @@ public class PlayerDaoImplTest {
         Optional<Player> foundPlayer = playerDao.findById(testPlayer.getId());
         assertTrue(foundPlayer.isPresent());
         assertEquals(testPlayer.getId(), foundPlayer.get().getId());
-        assertEquals(testPlayer.getFullName(), foundPlayer.get().getFullName());
+        assertEquals(testPlayer.getUsername(), foundPlayer.get().getUsername());
 
         Optional<Player> notFoundPlayer = playerDao.findById(999);
         assertFalse(notFoundPlayer.isPresent());
@@ -39,10 +41,10 @@ public class PlayerDaoImplTest {
 
     @Test
     public void testFindByUsername() {
-        Optional<Player> foundPlayer = playerDao.findByUsername(testPlayer.getFullName());
+        Optional<Player> foundPlayer = playerDao.findByUsername(testPlayer.getUsername());
         assertTrue(foundPlayer.isPresent());
         assertEquals(testPlayer.getId(), foundPlayer.get().getId());
-        assertEquals(testPlayer.getFullName(), foundPlayer.get().getFullName());
+        assertEquals(testPlayer.getUsername(), foundPlayer.get().getUsername());
 
         Optional<Player> notFoundPlayer = playerDao.findByUsername("NonExistentUsername");
         assertFalse(notFoundPlayer.isPresent());
@@ -88,7 +90,7 @@ public class PlayerDaoImplTest {
 
     private Player createSamplePlayer(String username, String password, BigDecimal balance) {
         return Player.builder()
-                .fullName(username)
+                .username(username)
                 .password(password)
                 .balance(balance)
                 .build();

@@ -1,5 +1,6 @@
-package org.example.serviceTest;
+package org.example.daoImplTest;
 
+import org.example.config.ContainersEnvironment;
 import org.example.core.domain.Player;
 import org.example.core.domain.Transaction;
 import org.example.core.domain.types.TransactionType;
@@ -13,14 +14,14 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TransactionDaoImplTest {
+public class TransactionDaoImplTest extends ContainersEnvironment {
+
     private TransactionDaoImpl transactionDao;
     private PlayerDaoImpl playerDao;
     private Transaction testTransaction;
     private Player testPlayer;
-
-    // я не успел сделать тест контейнеры
 
     @BeforeEach
     public void setUp() {
@@ -30,7 +31,7 @@ public class TransactionDaoImplTest {
         playerDao.deleteAll();
 
         testPlayer = Player.builder()
-                .fullName("TestPlayer")
+                .username("TestPlayer")
                 .password("password")
                 .balance(BigDecimal.valueOf(100.0))
                 .build();
@@ -114,3 +115,4 @@ public class TransactionDaoImplTest {
         assertTrue(transactions.isEmpty());
     }
 }
+

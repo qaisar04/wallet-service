@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
 
 /**
  * The `Player` class represents a player in the system.
@@ -26,9 +24,9 @@ public class Player {
     private Integer id;
 
     /**
-     * The full name of the player.
+     * The username of the player.
      */
-    private String fullName;
+    private String username;
 
     /**
      * The player's password for authentication.

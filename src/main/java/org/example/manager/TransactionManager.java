@@ -32,7 +32,12 @@ public class TransactionManager {
     public int viewAllAudits() {
         List<Audit> audits = auditService.findAll();
         for (Audit audit : audits) {
-            System.out.println(audit);
+            String formattedOutput = String.format("%-20s | %-15s | %-15s | %d",
+                    audit.getPlayerFullName(),
+                    audit.getAuditType(),
+                    audit.getActionType(),
+                    audit.getId());
+            System.out.println(formattedOutput);
         }
         return audits.size();
     }

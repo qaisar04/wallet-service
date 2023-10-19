@@ -1,9 +1,7 @@
 package org.example.dao.impl;
 
-import lombok.SneakyThrows;
 import org.example.dao.PlayerDao;
 import org.example.core.domain.Player;
-import org.example.exception.PlayerNotFoundException;
 import org.example.manager.ConnectionManager;
 
 import java.sql.*;
@@ -39,7 +37,7 @@ public class PlayerDaoImpl implements PlayerDao<Integer, Player> {
     public Optional<Player> findByUsername(String username) {
         String sqlFindByUsername = """
                 SELECT * FROM wallet_service_db.players
-                WHERE full_name=?;
+                WHERE username=?;
                 """;
 
         try (Connection connection = ConnectionManager.getConnection();
@@ -85,14 +83,14 @@ public class PlayerDaoImpl implements PlayerDao<Integer, Player> {
     @Override
     public Player save(Player player) {
         String sqlSave = """
-                INSERT INTO wallet_service_db.players(full_name, password, balance)
+                INSERT INTO wallet_service_db.players(username, password, balance)
                 VALUES (?,?,?);
                 """;
 
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlSave, Statement.RETURN_GENERATED_KEYS)) {
 
-            preparedStatement.setString(1, player.getFullName());
+            preparedStatement.setString(1, player.getUsername());
             preparedStatement.setString(2, player.getPassword());
             preparedStatement.setBigDecimal(3, player.getBalance());
 
@@ -114,7 +112,7 @@ public class PlayerDaoImpl implements PlayerDao<Integer, Player> {
     public void update(Player player) {
         String sqlUpdate = """
                 UPDATE wallet_service_db.players
-                SET full_name = ?,
+                SET username = ?,
                 balance = ?
                 WHERE id = ?;
                 """;
@@ -122,7 +120,7 @@ public class PlayerDaoImpl implements PlayerDao<Integer, Player> {
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate)) {
 
-            preparedStatement.setString(1, player.getFullName());
+            preparedStatement.setString(1, player.getUsername());
             preparedStatement.setBigDecimal(2, player.getBalance());
             preparedStatement.setObject(3, player.getId());
 
@@ -169,7 +167,7 @@ public class PlayerDaoImpl implements PlayerDao<Integer, Player> {
     private Player buildUser(ResultSet resultSet) throws SQLException {
         return Player.builder()
                 .id(resultSet.getObject("id", Integer.class))
-                .fullName(resultSet.getString("full_name"))
+                .username(resultSet.getString("username"))
                 .password(resultSet.getString("password"))
                 .balance(resultSet.getBigDecimal("balance"))
                 .build();

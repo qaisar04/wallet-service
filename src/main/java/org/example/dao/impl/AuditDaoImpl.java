@@ -55,8 +55,9 @@ public class AuditDaoImpl implements AuditDao<Integer, Audit> {
     public Optional<Audit> findByUsername(String username) {
         String sqlFindByUsername = """
                 SELECT * FROM wallet_service_db.audits
-                WHERE player_full_name=?;
+                WHERE player_username=?;
                 """;
+
 
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindByUsername)) {
@@ -107,7 +108,7 @@ public class AuditDaoImpl implements AuditDao<Integer, Audit> {
     @Override
     public Audit save(Audit audit) {
         String sqlSave = """
-                INSERT INTO wallet_service_db.audits(player_full_name, audit_type, action_type)
+                INSERT INTO wallet_service_db.audits(player_username, audit_type, action_type)
                 VALUES (?,?,?);
                 """;
 
@@ -222,7 +223,7 @@ public class AuditDaoImpl implements AuditDao<Integer, Audit> {
                 .id(resultSet.getInt("id"))
                 .auditType(auditType)
                 .actionType(actionType)
-                .playerFullName(resultSet.getString("player_full_name"))
+                .playerFullName(resultSet.getString("player_username"))
                 .build();
     }
 
