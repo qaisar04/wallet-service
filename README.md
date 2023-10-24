@@ -26,9 +26,11 @@
 
 - junit-jupiter
 - lombok
+- liquibase-core
+- postgresql
 
 ## Связаться со мной:
 
-- 📬 q.baltabayev@icloud.com
+- q.baltabayev@icloud.com
 - telegram: [@qaisario](https://t.me/qaisario)
 

@@ -3,35 +3,37 @@ package org.example.in;
 import org.example.handler.AdminHandler;
 import org.example.handler.MainHandler;
 import org.example.handler.UserHandler;
-import org.example.service.WalletPlayerService;
-import org.example.service.WalletTransactionsService;
+import org.example.manager.PlayerManager;
+import org.example.manager.TransactionManager;
 
 import java.math.BigDecimal;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
- * Класс WalletConsole представляет текстовый интерфейс для взаимодействия с сервисом кошелька.
- * Пользователь может выполнять регистрацию, аутентификацию, просматривать баланс,
- * осуществлять дебет и кредит, а также просматривать историю транзакций.
+ * The Wallet Console class represents a text interface for interacting with the wallet service.
+ * The user can perform registration, authentication, view the balance, debit and credit,
+ * as well as view the transaction history.
  */
 public class WalletConsole {
 
-    WalletPlayerService walletPlayerService;
-    WalletTransactionsService walletTransactionsService;
+    PlayerManager playerManager;
+    TransactionManager transactionManager;
+    private static WalletConsole walletConsole = new WalletConsole();
+
 
     public WalletConsole() {
-        walletPlayerService = new WalletPlayerService();
-        walletTransactionsService = new WalletTransactionsService(walletPlayerService);
+        playerManager = new PlayerManager();
+        transactionManager = new TransactionManager(playerManager);
     }
+
 
     static String loggedInUsername = null; // username того, кто вошел
     static boolean loggedIn = false; // для отслеживания авторизации
     Scanner scanner = new Scanner(System.in);
 
     /**
-     * Метод start запускает текстовый интерфейс для взаимодействия с кошельком.
-     *
-     * @throws Exception в случае возникновения исключений
+     * The start method launches a text interface for interacting with the wallet.
      */
     public void start(MainHandler mainHandler, UserHandler userHandler, AdminHandler adminHandler) {
         while (true) {
@@ -39,104 +41,156 @@ public class WalletConsole {
                 mainHandler.displayMainMenu();
                 int choice = userHandler.readChoice();
                 switch (choice) {
-                    case 1:
+                    case 1 -> {
                         System.out.print("Введите имя пользователя: ");
                         String username = scanner.nextLine();
-                        System.out.print("Введите пароль: ");
-                        String password = scanner.nextLine();
-                        walletPlayerService.registerPlayer(username, password);
-                        break;
-                    case 2:
+                        if(username.matches("^[a-zA-Zа-яА-Я]+$") && username.length() > 4) {
+                            System.out.print("Введите пароль: ");
+                            String password = scanner.nextLine();
+                            playerManager.registerPlayer(username, password);
+                        } else {
+                            System.err.println("Пожалуйста, введите имя пользователя, состоящее только из букв и длина которого превышает 4 букв.");
+                        }
+
+                    }
+                    case 2 -> {
                         System.out.print("Введите имя пользователя: ");
                         String authenticateUsername = scanner.nextLine();
-                        System.out.print("Введите пароль: ");
-                        String authenticatePassword = scanner.nextLine();
-                        if (walletPlayerService.authenticatePlayer(authenticateUsername, authenticatePassword)) {
-                            loggedIn = true;
-                            loggedInUsername = authenticateUsername;
+                        if(authenticateUsername.matches("^[a-zA-Zа-яА-Я]+$")) {
+                            System.out.print("Введите пароль: ");
+                            String authenticatePassword = scanner.nextLine();
+                            if (playerManager.authenticatePlayer(authenticateUsername, authenticatePassword)) {
+                                loggedIn = true;
+                                loggedInUsername = authenticateUsername;
+                            }
+                        } else {
+                            System.err.println("Пожалуйста, введите имя пользователя, состоящее только из букв.");
                         }
-                        break;
-                    case 3:
+                    }
+                    case 3 -> {
                         mainHandler.exitApplication();
-                        break;
-                    default:
+                    }
+                    default -> {
                         System.out.println("Неверный выбор. Пожалуйста, выберите снова.");
+                    }
                 }
             } else if ("admin".equals(loggedInUsername)) {
                 adminHandler.displayAdminMenu();
                 int choice = userHandler.readChoice();
                 switch (choice) {
-                    case 1:
-                        walletTransactionsService.viewAllAudits();
-                        break;
-                    case 2:
+                    case 1 -> {
+                        transactionManager.viewAllAudits();
+                    }
+                    case 2 -> {
                         userHandler.logout();
-                        break;
-                    case 3:
+                    }
+                    case 3 -> {
                         mainHandler.exitApplication();
-                        break;
-                    default:
+                    }
+                    default -> {
                         System.out.println("Неверный выбор. Пожалуйста, выберите снова.");
+                    }
                 }
             } else if (loggedInUsername != null) {
                 userHandler.displayUserMenu();
                 int choice = userHandler.readChoice();
                 switch (choice) {
-                    case 1:
-                        BigDecimal balance = walletPlayerService.getBalance(loggedInUsername);
+                    case 1 -> {
+                        BigDecimal balance = playerManager.getBalance(loggedInUsername);
                         System.out.println("Баланс игрока " + loggedInUsername + ": " + balance);
-                        break;
-                    case 2:
+                    }
+                    case 2 -> {
                         userHandler.displayUserCreditAndDebet();
                         int choiceDebetTransactionId = userHandler.readChoice();
                         switch (choiceDebetTransactionId) {
-                            case 1:
+                            case 1 -> {
                                 System.out.print("Введите сумму дебета: ");
-                                BigDecimal debetAmountTransactionId = scanner.nextBigDecimal();
-                                scanner.nextLine();
+                                BigDecimal debetAmountTransactionId = BigDecimal.ZERO;
+                                try {
+                                    debetAmountTransactionId = scanner.nextBigDecimal();
+                                } catch (InputMismatchException e) {
+                                    System.err.println("Ошибка ввода суммы кредита. Введено недопустимое значение.");
+                                    scanner.nextLine();
+                                    continue;
+                                }
+
+                                int transactionIdForDebet = 0;
                                 System.out.print("Введите идентификатор транзакции: ");
-                                String transactionIdForCredit = scanner.nextLine();
-                                walletPlayerService.debitWithTransactionId(loggedInUsername, transactionIdForCredit, debetAmountTransactionId);
-                                break;
-                            case 2:
+                                try {
+                                    transactionIdForDebet = scanner.nextInt();
+                                } catch (InputMismatchException e) {
+                                    System.err.println("Ошибка ввода идентификатора транзакции. Введено недопустимое значение.");
+                                    scanner.nextLine();
+                                    continue;
+                                }
+                                playerManager.debitWithTransactionId(loggedInUsername, transactionIdForDebet, debetAmountTransactionId);
+                            }
+                            case 2 -> {
                                 System.out.print("Введите сумму дебета: ");
-                                BigDecimal debetAmount = scanner.nextBigDecimal();
-                                scanner.nextLine();
-                                walletPlayerService.debitWithoutTransactionId(loggedInUsername, debetAmount);
-                                break;
+                                BigDecimal debetAmount = BigDecimal.ZERO;
+                                try {
+                                    debetAmount = scanner.nextBigDecimal();
+                                } catch (InputMismatchException e) {
+                                    System.err.println("Ошибка ввода суммы дебета. Введено недопустимое значение.");
+                                    scanner.nextLine();
+                                    continue;
+                                }
+                                playerManager.debitWithoutTransactionId(loggedInUsername, debetAmount);
+                            }
                         }
-                        break;
-                    case 3:
+                    }
+                    case 3 -> {
                         userHandler.displayUserCreditAndDebet();
                         int choiceCreditTransactionId = userHandler.readChoice();
                         switch (choiceCreditTransactionId) {
-                            case 1:
+                            case 1 -> {
                                 System.out.print("Введите сумму кредита: ");
-                                BigDecimal creditAmountTransactionId = scanner.nextBigDecimal();
-                                scanner.nextLine();
+                                BigDecimal creditAmountTransactionId = BigDecimal.ZERO;
+                                try {
+                                    creditAmountTransactionId = scanner.nextBigDecimal();
+                                } catch (InputMismatchException e) {
+                                    System.err.println("Ошибка ввода суммы кредита. Введено недопустимое значение.");
+                                    scanner.nextLine();
+                                    continue;
+                                }
+
+                                int transactionIdForCredit = 0;
                                 System.out.print("Введите идентификатор транзакции: ");
-                                String transactionIdForCredit = scanner.nextLine();
-                                walletPlayerService.creditWithTransactionId(loggedInUsername, transactionIdForCredit, creditAmountTransactionId);
-                                break;
-                            case 2:
+                                try {
+                                    transactionIdForCredit = scanner.nextInt();
+                                } catch (InputMismatchException e) {
+                                    System.err.println("Ошибка ввода идентификатора транзакции. Введено недопустимое значение.");
+                                    scanner.nextLine();
+                                    continue;
+                                }
+                                playerManager.creditWithTransactionId(loggedInUsername, transactionIdForCredit, creditAmountTransactionId);
+                            }
+                            case 2 -> {
                                 System.out.print("Введите сумму кредита: ");
-                                BigDecimal creditAmount = scanner.nextBigDecimal();
-                                scanner.nextLine();
-                                walletPlayerService.creditWithoutTransactionId(loggedInUsername, creditAmount);
-                                break;
+                                BigDecimal creditAmount = BigDecimal.ZERO;
+                                try {
+                                    creditAmount = scanner.nextBigDecimal();
+                                } catch (InputMismatchException e) {
+                                    System.err.println("Ошибка ввода суммы кредита. Введено недопустимое значение.");
+                                    scanner.nextLine();
+                                    continue;
+                                }
+                                playerManager.creditWithoutTransactionId(loggedInUsername, creditAmount);
+                            }
                         }
-                        break;
-                    case 4:
-                        walletTransactionsService.viewTransactionHistory(loggedInUsername);
-                        break;
-                    case 5:
+                    }
+                    case 4 -> {
+                        transactionManager.viewTransactionHistory(loggedInUsername);
+                    }
+                    case 5 -> {
                         userHandler.logout();
-                        break;
-                    case 6:
+                    }
+                    case 6 -> {
                         mainHandler.exitApplication();
-                        break;
-                    default:
+                    }
+                    default -> {
                         System.out.println("Неверный выбор. Пожалуйста, выберите снова.");
+                    }
                 }
             } else {
                 System.out.println("Вы не авторизованы. Войдите сначала в аккаунт.");
@@ -151,4 +205,9 @@ public class WalletConsole {
     public void setLoggedIn(boolean loggedIn) {
         this.loggedIn = loggedIn;
     }
+
+    public static WalletConsole getInstance() {
+        return walletConsole;
+    }
+
 }

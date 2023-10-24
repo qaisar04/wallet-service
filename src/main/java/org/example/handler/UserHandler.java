@@ -6,19 +6,22 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
- * Класс `UserHandler` представляет собой обработчик для взаимодействия пользователя
- * с консольным интерфейсом приложения. Он предоставляет функциональность, связанную с
- * отображением меню пользователя, чтением ввода и управлением пользовательскими действиями.
+ * The `UserHandler` class serves as a handler for user interaction with the application's console interface.
+ * It provides functionality related to displaying user menus, reading input, and managing user actions.
  */
 public class UserHandler {
 
     Scanner scanner = new Scanner(System.in);
+
+    /**
+     * The wallet console instance for managing user sessions and actions.
+     */
     WalletConsole walletConsole = new WalletConsole();
 
     /**
-     * Считывает выбор пользователя из консоли.
+     * Reads the user's choice from the console.
      *
-     * @return Выбор пользователя.
+     * @return The user's choice.
      */
     public int readChoice() {
         int choice = 0;
@@ -32,7 +35,7 @@ public class UserHandler {
     }
 
     /**
-     * Выходит из аккаунта пользователя и сбрасывает связанные с ним данные.
+     * Logs out the user and resets associated data.
      */
     public void logout() {
         walletConsole.setLoggedInUsername(null);
@@ -41,32 +44,37 @@ public class UserHandler {
     }
 
     /**
-     * Отображает меню для пользователя в консоли.
-     * Меню включает в себя список доступных действий для пользователя.
+     * Displays the user menu in the console.
+     * The menu includes a list of available user actions.
      */
     public void displayUserMenu() {
-        System.out.println("╔═══════════════════════════════╗");
-        System.out.println("║       Выберите действие:      ║");
-        System.out.println("║  1. Просмотр баланса          ║");
-        System.out.println("║  2. Дебет                     ║");
-        System.out.println("║  3. Кредит                    ║");
-        System.out.println("║  4. История транзакций        ║");
-        System.out.println("║  5. Выйти из аккаунта         ║");
-        System.out.println("║  6. Выйти из приложения       ║");
-        System.out.println("╚═══════════════════════════════╝");
 
+        String s = """
+                | Выберите действие:
+                | 1. Просмотр баланса
+                | 2. Дебет
+                | 3. Кредит
+                | 4. История транзакций
+                | 5. Выйти из аккаунта
+                | 6. Выйти из приложения
+                """;
+
+        System.out.println(s);
     }
 
     /**
-     * Отображает меню для пользователя, связанное с транзакциями кредита и дебета.
-     * Меню включает в себя выбор пользователя для ввода идентификатора транзакции.
+     * Displays the user menu related to credit and debit transactions.
+     * The menu includes the user's choice for providing a transaction identifier.
      */
     public void displayUserCreditAndDebet() {
-        System.out.println("╔════════════════════════════════════════════════════╗");
-        System.out.println("║ Желаете ли вы ввести идентификатор для транзакции? ║");
-        System.out.println("║ 1. Да                                              ║");
-        System.out.println("║ 2. Нет                                             ║");
-        System.out.println("╚════════════════════════════════════════════════════╝");
+
+        String s = """
+                | Желаете ли вы ввести идентификатор для транзакции?
+                | 1. Да
+                | 2. Нет
+                """;
+
+        System.out.println(s);
     }
 
 

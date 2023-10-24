@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.10.xsd">
+
+
+
+    <changeSet id="004-create-table-audits" author="qaisar">
+        <createTable schemaName="wallet" tableName="audits">
+            <column name="id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="audit_type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="action_type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="player_username" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
+
