@@ -34,7 +34,7 @@ public interface Service<T, V> {
      * @param v The entity to save.
      * @return The saved entity with any auto-generated fields populated.
      */
-    V save(V v);
+    void save(V v);
 
     /**
      * Updates an existing entity in the data store.

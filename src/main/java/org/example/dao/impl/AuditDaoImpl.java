@@ -1,11 +1,10 @@
 package org.example.dao.impl;
 
-import lombok.SneakyThrows;
 import org.example.core.domain.Audit;
 import org.example.core.domain.types.ActionType;
 import org.example.core.domain.types.AuditType;
-import org.example.dao.AuditDao;
-import org.example.manager.ConnectionManager;
+import org.example.dao.Dao;
+import org.example.util.ConnectionManager;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import java.util.Optional;
 /**
  * Implementation of the AuditDao interface for interacting with the database and audit records.
  */
-public class AuditDaoImpl implements AuditDao<Integer, Audit> {
+public class AuditDaoImpl implements Dao<Integer, Audit> {
 
     private static final AuditDaoImpl auditDaoImpl = new AuditDaoImpl();
 
@@ -28,7 +27,7 @@ public class AuditDaoImpl implements AuditDao<Integer, Audit> {
     @Override
     public Optional<Audit> findById(Integer id) {
         String sqlFindById = """
-                SELECT * FROM wallet_service_db.audits
+                SELECT * FROM wallet.audits
                 WHERE id=?;
                 """;
 
@@ -54,7 +53,7 @@ public class AuditDaoImpl implements AuditDao<Integer, Audit> {
      */
     public Optional<Audit> findByUsername(String username) {
         String sqlFindByUsername = """
-                SELECT * FROM wallet_service_db.audits
+                SELECT * FROM wallet.audits
                 WHERE player_username=?;
                 """;
 
@@ -79,7 +78,7 @@ public class AuditDaoImpl implements AuditDao<Integer, Audit> {
     @Override
     public List<Audit> findAll() {
         String sqlFindAll = """
-                SELECT * FROM wallet_service_db.audits;
+                SELECT * FROM wallet.audits;
                 """;
 
         try (Connection connection = ConnectionManager.getConnection();
@@ -108,37 +107,39 @@ public class AuditDaoImpl implements AuditDao<Integer, Audit> {
     @Override
     public Audit save(Audit audit) {
         String sqlSave = """
-                INSERT INTO wallet_service_db.audits(player_username, audit_type, action_type)
-                VALUES (?,?,?);
-                """;
+            INSERT INTO wallet.audits(player_username, audit_type, action_type)
+            VALUES (?,?,?);
+            """;
 
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlSave, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setObject(1, audit.getPlayerFullName());
             preparedStatement.setObject(2, audit.getAuditType(), Types.OTHER);
-            preparedStatement.setObject(3, audit.getActionType(), Types.OTHER); // Use Types.OTHER for custom data types
+            preparedStatement.setObject(3, audit.getActionType(), Types.OTHER);
 
             int affectedRows = preparedStatement.executeUpdate();
 
-            if (affectedRows == 0) {
-                System.err.println("Ошибка при сохранении аудиторской записи.");
-            } else {
-                ResultSet keys = preparedStatement.getGeneratedKeys();
-
-                if (keys.next()) {
-                    audit.setId(keys.getObject("id", Integer.class));
-                } else {
-                    System.err.println("Не удалось получить сгенерированный ключ для аудиторской записи.");
+            if (affectedRows > 0) {
+                try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
+                    if (keys.next()) {
+                        audit.setId(keys.getObject(1, Integer.class));
+                    }
+                } catch (SQLException e) {
+                    System.err.println("Ошибка при получении сгенерированного ключа: " + e.getMessage());
                 }
+            } else {
+                System.err.println("Ошибка при выполнении SQL-запроса. Нет добавленных записей.");
             }
 
             return audit;
         } catch (SQLException e) {
             System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
-            return null;
         }
+        return null;
     }
+
+
 
     /**
      * Update an audit record in the database.
@@ -148,7 +149,7 @@ public class AuditDaoImpl implements AuditDao<Integer, Audit> {
     @Override
     public void update(Audit audit) {
         String sqlUpdate = """
-                UPDATE wallet_service_db.audits
+                UPDATE wallet.audits
                 SET audit_type = ?,
                 action_type = ?
                 WHERE id = ?;
@@ -176,7 +177,7 @@ public class AuditDaoImpl implements AuditDao<Integer, Audit> {
     @Override
     public boolean delete(Integer id) {
         String sqlDeleteById = """
-                DELETE FROM wallet_service_db.audits
+                DELETE FROM wallet.audits
                 WHERE id = ?;
                 """;
 
@@ -199,7 +200,7 @@ public class AuditDaoImpl implements AuditDao<Integer, Audit> {
     @Override
     public boolean deleteAll() {
         String sqlDeleteById = """
-                DELETE FROM wallet_service_db.audits
+                DELETE FROM wallet.audits
                 """;
 
         try (Connection connection = ConnectionManager.getConnection();
@@ -212,7 +213,7 @@ public class AuditDaoImpl implements AuditDao<Integer, Audit> {
         }
     }
 
-    public Audit buildAudit(ResultSet resultSet) throws SQLException {
+    private Audit buildAudit(ResultSet resultSet) throws SQLException {
         String auditTypeString = resultSet.getString("audit_type");
         AuditType auditType = AuditType.valueOf(auditTypeString);
 
@@ -226,6 +227,8 @@ public class AuditDaoImpl implements AuditDao<Integer, Audit> {
                 .playerFullName(resultSet.getString("player_username"))
                 .build();
     }
+
+    private AuditDaoImpl() {}
 
     public static AuditDaoImpl getInstance() {
         return auditDaoImpl;

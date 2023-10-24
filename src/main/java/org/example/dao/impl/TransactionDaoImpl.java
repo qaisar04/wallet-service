@@ -1,9 +1,9 @@
 package org.example.dao.impl;
 
 import org.example.core.domain.types.TransactionType;
-import org.example.dao.TransactionDao;
+import org.example.dao.Dao;
 import org.example.core.domain.Transaction;
-import org.example.manager.ConnectionManager;
+import org.example.util.ConnectionManager;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,52 +13,26 @@ import java.util.Optional;
 /**
  * Implementation of the TransactionDao interface for managing transaction data in the "wallet_service_db" database.
  */
-public class TransactionDaoImpl implements TransactionDao<Integer, Transaction> {
+public class TransactionDaoImpl implements Dao<Integer, Transaction> {
 
     private static final TransactionDaoImpl transactionDaoImpl = new TransactionDaoImpl();
 
     /**
      * Retrieve a transaction by its ID.
      *
-     * @param id The ID of the transaction to retrieve.
+     * @param transactionId The ID of the transaction to retrieve.
      * @return An Optional containing the retrieved transaction, or an empty Optional if not found.
      */
     @Override
-    public Optional<Transaction> findById(Integer id) {
+    public Optional<Transaction> findById(Integer transactionId) {
         String sqlFindById = """
-                SELECT * FROM wallet_service_db.transactions
-                WHERE id=?;
+                SELECT * FROM wallet.transactions
+                WHERE transaction_id=?;
                 """;
 
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindById)) {
-            preparedStatement.setObject(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            return resultSet.next()
-                    ? Optional.of(buildTransaction(resultSet))
-                    : Optional.empty();
-        } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
-            return Optional.empty();
-        }
-    }
-
-    /**
-     * Retrieve a transaction by its custom ID.
-     *
-     * @param customId The custom ID of the transaction to retrieve.
-     * @return An Optional containing the retrieved transaction, or an empty Optional if not found.
-     */
-    public Optional<Transaction> findByCustomId(Integer customId) {
-        String sqlFindByCustomId = """
-                SELECT * FROM wallet_service_db.transactions
-                WHERE custom_id=?;
-                """;
-
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sqlFindByCustomId)) {
-            preparedStatement.setObject(1, customId);
+            preparedStatement.setObject(1, transactionId);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             return resultSet.next()
@@ -78,7 +52,7 @@ public class TransactionDaoImpl implements TransactionDao<Integer, Transaction> 
      */
     public List<Transaction> findByPlayerId(Integer playerId) {
         String sqlFindById = """
-                SELECT * FROM wallet_service_db.transactions
+                SELECT * FROM wallet.transactions
                 WHERE player_id=?;
                 """;
 
@@ -108,7 +82,7 @@ public class TransactionDaoImpl implements TransactionDao<Integer, Transaction> 
     @Override
     public List<Transaction> findAll() {
         String sqlFindAll = """
-                SELECT * FROM wallet_service_db.transactions;
+                SELECT * FROM wallet.transactions;
                 """;
 
         try (Connection connection = ConnectionManager.getConnection();
@@ -137,14 +111,14 @@ public class TransactionDaoImpl implements TransactionDao<Integer, Transaction> 
     @Override
     public Transaction save(Transaction transaction) {
         String sqlSave = """
-                INSERT INTO wallet_service_db.transactions(custom_id, type, amount, player_id)
+                INSERT INTO wallet.transactions(transaction_id, type, amount, player_id)
                 VALUES (?,?,?,?);
                 """;
 
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlSave, Statement.RETURN_GENERATED_KEYS)) {
 
-            preparedStatement.setObject(1, transaction.getCustomId());
+            preparedStatement.setObject(1, transaction.getTransactionId());
             preparedStatement.setObject(2, transaction.getType(), Types.OTHER);
             preparedStatement.setObject(3, transaction.getAmount());
             preparedStatement.setObject(4, transaction.getPlayerId());
@@ -153,14 +127,14 @@ public class TransactionDaoImpl implements TransactionDao<Integer, Transaction> 
             ResultSet keys = preparedStatement.getGeneratedKeys();
 
             if (keys.next()) {
-                transaction.setId(keys.getInt("id"));
+                transaction.setTransactionId(keys.getObject("transaction_id", Integer.class));
             }
 
+            return transaction;
 
-            return transaction;
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
-            return transaction;
+            System.err.println("class: TransactionDaoImpl | method: save |  Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            return null;
         }
     }
 
@@ -172,10 +146,10 @@ public class TransactionDaoImpl implements TransactionDao<Integer, Transaction> 
     @Override
     public void update(Transaction transaction) {
         String sqlUpdate = """
-                UPDATE wallet_service_db.transactions
+                UPDATE wallet.transactions
                 SET type = ?,
                     amount = ?
-                WHERE id = ?;
+                WHERE transaction_id = ?;
                 """;
 
         try (Connection connection = ConnectionManager.getConnection();
@@ -183,7 +157,7 @@ public class TransactionDaoImpl implements TransactionDao<Integer, Transaction> 
 
             preparedStatement.setObject(1, transaction.getType(), Types.OTHER);
             preparedStatement.setObject(2, transaction.getAmount());
-            preparedStatement.setObject(3, transaction.getId());
+            preparedStatement.setObject(3, transaction.getTransactionId());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -200,8 +174,8 @@ public class TransactionDaoImpl implements TransactionDao<Integer, Transaction> 
     @Override
     public boolean delete(Integer id) {
         String sqlDeleteById = """
-                DELETE FROM wallet_service_db.transactions
-                WHERE id = ?;
+                DELETE FROM wallet.transactions
+                WHERE transaction_id = ?;
                 """;
 
         try (Connection connection = ConnectionManager.getConnection();
@@ -223,7 +197,7 @@ public class TransactionDaoImpl implements TransactionDao<Integer, Transaction> 
     @Override
     public boolean deleteAll() {
         String sqlDeleteById = """
-                DELETE FROM wallet_service_db.transactions
+                DELETE FROM wallet.transactions
                 """;
 
         try (Connection connection = ConnectionManager.getConnection();
@@ -248,12 +222,14 @@ public class TransactionDaoImpl implements TransactionDao<Integer, Transaction> 
         TransactionType transactionType = TransactionType.valueOf(transactionTypeString);
 
         return Transaction.builder()
-                .customId(resultSet.getInt("custom_id"))
+                .transactionId(resultSet.getInt("transaction_id"))
                 .type(transactionType)
                 .amount(resultSet.getBigDecimal("amount"))
                 .playerId(resultSet.getInt("player_id"))
                 .build();
     }
+
+    private TransactionDaoImpl() {}
 
     /**
      * Get the singleton instance of the TransactionDaoImpl class.

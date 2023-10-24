@@ -65,7 +65,7 @@ public class TransactionManager {
 
             for (Transaction transaction : transactionsList) {
                 System.out.printf("%-10s | %-16s | %.2f%n",
-                        transaction.getCustomId(),
+                        transaction.getTransactionId(),
                         transaction.getType(),
                         transaction.getAmount());
             }

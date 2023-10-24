@@ -5,7 +5,7 @@ import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import org.example.manager.ConnectionManager;
+import org.example.util.ConnectionManager;
 
 import java.sql.Connection;
 

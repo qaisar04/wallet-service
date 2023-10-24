@@ -34,8 +34,8 @@ public class WalletPlayerService implements Service<Integer, Player>{
     }
 
     @Override
-    public Player save(Player player) {
-        return playerDaoImpl.save(player);
+    public void save(Player player) {
+         playerDaoImpl.save(player);
     }
 
     @Override

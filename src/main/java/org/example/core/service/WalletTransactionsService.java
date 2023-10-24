@@ -17,11 +17,6 @@ public class WalletTransactionsService implements Service<Integer, Transaction> 
 
     private static WalletTransactionsService walletTransactionsService = new WalletTransactionsService();
 
-
-    public Optional<Transaction> findByCustomId(Integer id) {
-        return transactionDaoImpl.findByCustomId(id);
-    }
-
     public List<Transaction> findByPlayerId(Integer id) {
         return transactionDaoImpl.findByPlayerId(id);
     }
@@ -37,8 +32,8 @@ public class WalletTransactionsService implements Service<Integer, Transaction> 
     }
 
     @Override
-    public Transaction save(Transaction transaction) {
-        return transactionDaoImpl.save(transaction);
+    public void save(Transaction transaction) {
+         transactionDaoImpl.save(transaction);
     }
 
     @Override

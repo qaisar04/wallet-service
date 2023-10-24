@@ -7,7 +7,7 @@
 
 
     <changeSet id="004-create-table-audits" author="qaisar">
-        <createTable schemaName="wallet_service_db" tableName="audits">
+        <createTable schemaName="wallet" tableName="audits">
             <column name="id" type="SERIAL">
                 <constraints primaryKey="true" nullable="false"/>
             </column>

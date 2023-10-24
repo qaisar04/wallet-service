@@ -1,22 +1,22 @@
 package org.example.dao.impl;
 
-import org.example.dao.PlayerDao;
+import org.example.dao.Dao;
 import org.example.core.domain.Player;
-import org.example.manager.ConnectionManager;
+import org.example.util.ConnectionManager;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class PlayerDaoImpl implements PlayerDao<Integer, Player> {
+public class PlayerDaoImpl implements Dao<Integer, Player> {
 
     private static final PlayerDaoImpl playerDaoImpl = new PlayerDaoImpl();
 
     @Override
     public Optional<Player> findById(Integer id) {
         String sqlFindById = """
-                SELECT * FROM wallet_service_db.players
+                SELECT * FROM wallet.players
                 WHERE id=?;
                 """;
 
@@ -36,7 +36,7 @@ public class PlayerDaoImpl implements PlayerDao<Integer, Player> {
 
     public Optional<Player> findByUsername(String username) {
         String sqlFindByUsername = """
-                SELECT * FROM wallet_service_db.players
+                SELECT * FROM wallet.players
                 WHERE username=?;
                 """;
 
@@ -60,7 +60,7 @@ public class PlayerDaoImpl implements PlayerDao<Integer, Player> {
     @Override
     public List<Player> findAll() {
         String sqlFindAll = """
-                SELECT * FROM wallet_service_db.players;
+                SELECT * FROM wallet.players;
                 """;
 
         try (Connection connection = ConnectionManager.getConnection();
@@ -83,7 +83,7 @@ public class PlayerDaoImpl implements PlayerDao<Integer, Player> {
     @Override
     public Player save(Player player) {
         String sqlSave = """
-                INSERT INTO wallet_service_db.players(username, password, balance)
+                INSERT INTO wallet.players(username, password, balance)
                 VALUES (?,?,?);
                 """;
 
@@ -111,7 +111,7 @@ public class PlayerDaoImpl implements PlayerDao<Integer, Player> {
     @Override
     public void update(Player player) {
         String sqlUpdate = """
-                UPDATE wallet_service_db.players
+                UPDATE wallet.players
                 SET username = ?,
                 balance = ?
                 WHERE id = ?;
@@ -133,7 +133,7 @@ public class PlayerDaoImpl implements PlayerDao<Integer, Player> {
     @Override
     public boolean delete(Integer id) {
         String sqlDeleteById = """
-                DELETE FROM wallet_service_db.players
+                DELETE FROM wallet.players
                 WHERE id = ?;
                 """;
 
@@ -151,7 +151,7 @@ public class PlayerDaoImpl implements PlayerDao<Integer, Player> {
     @Override
     public boolean deleteAll() {
         String sqlDeleteById = """
-                DELETE FROM wallet_service_db.players
+                DELETE FROM wallet.players
                 """;
 
         try (Connection connection = ConnectionManager.getConnection();
@@ -172,6 +172,8 @@ public class PlayerDaoImpl implements PlayerDao<Integer, Player> {
                 .balance(resultSet.getBigDecimal("balance"))
                 .build();
     }
+
+    private PlayerDaoImpl() {}
 
     public static PlayerDaoImpl getInstance() {
         return playerDaoImpl;

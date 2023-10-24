@@ -6,7 +6,7 @@
 
     <changeSet id="001-create-scheme" author="qaisar">
         <sql>
-            CREATE SCHEMA IF NOT EXISTS wallet_service_db;
+            CREATE SCHEMA IF NOT EXISTS wallet;
         </sql>
     </changeSet>
 

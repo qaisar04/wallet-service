@@ -21,12 +21,7 @@ public class Transaction {
     /**
      * The unique identifier of the transaction.
      */
-    private Integer id;
-
-    /**
-     * The custom identifier for the transaction.
-     */
-    private Integer customId;
+    private Integer transactionId;
 
     /**
      * The type of the transaction (e.g., credit or debit).
@@ -46,17 +41,17 @@ public class Transaction {
     /**
      * Creates a new transaction with the specified parameters.
      *
-     * @param customId The custom identifier for the transaction.
+     * @param transactionId The custom identifier for the transaction.
      * @param type The type of the transaction (e.g., credit or debit).
      * @param amount The monetary amount associated with the transaction.
      * @param playerId The unique identifier of the player involved in the transaction.
      * @return A new `Transaction` object with the specified parameters.
      */
-    public static Transaction createTransaction(Integer customId, TransactionType type, BigDecimal amount, Integer playerId) {
+    public static Transaction createTransaction(Integer transactionId, TransactionType type, BigDecimal amount, Integer playerId) {
         return Transaction.builder()
+                .transactionId(transactionId)
                 .type(type)
                 .amount(amount)
-                .customId(customId)
                 .playerId(playerId)
                 .build();
     }

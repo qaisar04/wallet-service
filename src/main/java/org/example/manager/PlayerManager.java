@@ -116,7 +116,7 @@ public class PlayerManager {
             return false;
         }
 
-        Optional<Transaction> existingTransaction = transactionsService.findByCustomId(customId);
+        Optional<Transaction> existingTransaction = transactionsService.findById(customId);
 
         if (existingTransaction.isPresent()) {
             System.out.println("Транзакция с таким идентификатором уже существует.");

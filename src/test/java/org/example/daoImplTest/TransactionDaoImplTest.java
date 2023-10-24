@@ -38,7 +38,7 @@ public class TransactionDaoImplTest extends ContainersEnvironment {
         playerDao.save(testPlayer);
 
         testTransaction = Transaction.builder()
-                .customId(12345)
+                .transactionId(12345)
                 .type(TransactionType.CREDIT)
                 .amount(BigDecimal.valueOf(50.0))
                 .playerId(testPlayer.getId())
@@ -48,11 +48,9 @@ public class TransactionDaoImplTest extends ContainersEnvironment {
     @Test
     public void testFindById() {
         transactionDao.save(testTransaction);
-
-        Optional<Transaction> foundTransaction = transactionDao.findById(testTransaction.getId());
+        Optional<Transaction> foundTransaction = transactionDao.findById(testTransaction.getTransactionId());
         assertTrue(foundTransaction.isPresent());
-        assertNotEquals(testTransaction.getId(), foundTransaction.get().getId());
-        assertEquals(testTransaction.getCustomId(), foundTransaction.get().getCustomId());
+        assertEquals(testTransaction.getTransactionId(), foundTransaction.get().getTransactionId());
     }
 
     @Test
@@ -60,9 +58,9 @@ public class TransactionDaoImplTest extends ContainersEnvironment {
         // Вставляем тестовую транзакцию в базу данных
         transactionDao.save(testTransaction);
 
-        Optional<Transaction> foundTransaction = transactionDao.findByCustomId(testTransaction.getCustomId());
+        Optional<Transaction> foundTransaction = transactionDao.findById(testTransaction.getTransactionId());
         assertTrue(foundTransaction.isPresent());
-        assertEquals(testTransaction.getCustomId(), foundTransaction.get().getCustomId());
+        assertEquals(testTransaction.getTransactionId(), foundTransaction.get().getTransactionId());
     }
 
     @Test
@@ -86,7 +84,7 @@ public class TransactionDaoImplTest extends ContainersEnvironment {
         testTransaction.setType(TransactionType.DEBIT);
         testTransaction.setAmount(BigDecimal.valueOf(25.55));
         transactionDao.update(testTransaction);
-        Optional<Transaction> updatedTransaction = transactionDao.findById(testTransaction.getId());
+        Optional<Transaction> updatedTransaction = transactionDao.findById(testTransaction.getTransactionId());
         assertTrue(updatedTransaction.isPresent());
         assertEquals(TransactionType.DEBIT, updatedTransaction.get().getType());
         assertEquals(BigDecimal.valueOf(25.55), updatedTransaction.get().getAmount());
@@ -94,12 +92,11 @@ public class TransactionDaoImplTest extends ContainersEnvironment {
 
     @Test
     public void testDelete() {
-        // Вставляем тестовую транзакцию в базу данных
         transactionDao.save(testTransaction);
 
-        assertTrue(transactionDao.delete(testTransaction.getId()));
+        assertTrue(transactionDao.delete(testTransaction.getTransactionId()));
 
-        Optional<Transaction> deletedTransaction = transactionDao.findById(testTransaction.getId());
+        Optional<Transaction> deletedTransaction = transactionDao.findById(testTransaction.getTransactionId());
         assertFalse(deletedTransaction.isPresent());
     }
 

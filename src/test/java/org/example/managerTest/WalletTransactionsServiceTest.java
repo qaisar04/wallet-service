@@ -47,6 +47,8 @@ public class WalletTransactionsServiceTest {
         assertTrue(playerManager.registerPlayer("user1", "password1"));
         playerManager.authenticatePlayer("user1", "password1");
         playerManager.creditWithoutTransactionId("user1", BigDecimal.valueOf(50.0));
-        assertEquals(3, transactionManager.viewAllAudits());
+        playerManager.creditWithoutTransactionId("user2", BigDecimal.valueOf(50.0));
+
+        assertEquals(4, transactionManager.viewAllAudits());
     }
 }

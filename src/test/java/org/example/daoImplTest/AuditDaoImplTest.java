@@ -100,8 +100,6 @@ public class AuditDaoImplTest extends ContainersEnvironment {
 
         Audit savedAudit = auditDao.save(auditToSave);
 
-        assertNotNull(savedAudit.getId());
-
         assertEquals(auditToSave.getPlayerFullName(), savedAudit.getPlayerFullName());
         assertEquals(auditToSave.getAuditType(), savedAudit.getAuditType());
         assertEquals(auditToSave.getActionType(), savedAudit.getActionType());

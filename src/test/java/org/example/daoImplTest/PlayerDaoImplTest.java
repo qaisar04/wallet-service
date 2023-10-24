@@ -3,6 +3,7 @@ package org.example.daoImplTest;
 import org.example.config.ContainersEnvironment;
 import org.example.core.domain.Player;
 import org.example.dao.impl.PlayerDaoImpl;
+import org.example.dao.impl.TransactionDaoImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,12 +18,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PlayerDaoImplTest extends ContainersEnvironment {
 
     PlayerDaoImpl playerDao;
+    TransactionDaoImpl transactionDao;
     private Player testPlayer;
 
 
     @BeforeEach
     public void setUp() {
         playerDao = PlayerDaoImpl.getInstance();
+        transactionDao = TransactionDaoImpl.getInstance();
+
+        transactionDao.deleteAll();
         playerDao.deleteAll();
         testPlayer = createSamplePlayer("TestPlayer", "password", BigDecimal.valueOf(100.0));
         playerDao.save(testPlayer);

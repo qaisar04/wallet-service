@@ -23,8 +23,8 @@ public class WalletAuditService implements Service<Integer, Audit> {
     }
 
     @Override
-    public Audit save(Audit audit) {
-        return auditDaoImpl.save(audit);
+    public void save(Audit audit) {
+         auditDaoImpl.save(audit);
     }
 
     @Override

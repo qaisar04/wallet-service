@@ -21,9 +21,6 @@ public class WalletConsole {
     TransactionManager transactionManager;
     private static WalletConsole walletConsole = new WalletConsole();
 
-    public static WalletConsole getInstance() {
-        return walletConsole;
-    }
 
     public WalletConsole() {
         playerManager = new PlayerManager();
@@ -53,7 +50,6 @@ public class WalletConsole {
                             playerManager.registerPlayer(username, password);
                         } else {
                             System.err.println("Пожалуйста, введите имя пользователя, состоящее только из букв и длина которого превышает 4 букв.");
-                            continue;
                         }
 
                     }
@@ -69,7 +65,6 @@ public class WalletConsole {
                             }
                         } else {
                             System.err.println("Пожалуйста, введите имя пользователя, состоящее только из букв.");
-                            continue;
                         }
                     }
                     case 3 -> {
@@ -210,4 +205,9 @@ public class WalletConsole {
     public void setLoggedIn(boolean loggedIn) {
         this.loggedIn = loggedIn;
     }
+
+    public static WalletConsole getInstance() {
+        return walletConsole;
+    }
+
 }

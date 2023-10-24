@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.10.xsd">
 
     <changeSet id="002-create-table-players" author="qaisar">
-        <createTable schemaName="wallet_service_db" tableName="players">
+        <createTable schemaName="wallet" tableName="players">
             <column name="id" type="SERIAL">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
