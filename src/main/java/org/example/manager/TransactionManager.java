@@ -13,15 +13,17 @@ import static org.example.core.domain.types.ActionType.VIEW_TRANSACTION_HISTORY;
 import static org.example.core.domain.types.AuditType.*;
 
 public class TransactionManager {
-    private PlayerManager playerManager;
-
+    private PlayerManager playerManager = PlayerManager.getInstance();
     private WalletPlayerService playerService = WalletPlayerService.getInstance();
     private WalletTransactionsService transactionsService = WalletTransactionsService.getInstance();
     private WalletAuditService auditService = WalletAuditService.getInstance();
 
-    public TransactionManager(PlayerManager playerManager) {
-        this.playerManager = playerManager;
+    public static final TransactionManager transactionManager = new TransactionManager();
+
+    public static TransactionManager getInstance() {
+        return transactionManager;
     }
+
 
 
     /**
@@ -47,7 +49,7 @@ public class TransactionManager {
      *
      * @param username The player's name.
      */
-    public int viewTransactionHistory(String username) {
+    public List<Transaction> viewTransactionHistory(String username) {
         Optional<Player> optionalPlayer = playerService.findByUsername(username);
 
         if (optionalPlayer.isPresent()) {
@@ -57,7 +59,7 @@ public class TransactionManager {
             if (transactionsList.isEmpty()) {
                 System.out.println("У пользователя " + username + " нет истории транзакций.");
                 playerManager.audit(username, VIEW_TRANSACTION_HISTORY, FAIL);
-                return 0;
+                return transactionsList;
             }
 
             System.out.println("Custom ID | Transaction Type  | Amount");
@@ -70,11 +72,11 @@ public class TransactionManager {
                         transaction.getAmount());
             }
             playerManager.audit(username, VIEW_TRANSACTION_HISTORY, SUCCESS);
-            return transactionsList.size();
+            return transactionsList;
         } else {
             System.out.println("Пользователь с именем " + username + " не найден.");
             playerManager.audit(username, VIEW_TRANSACTION_HISTORY, FAIL);
-            return 0;
+            return null;
         }
     }
 }

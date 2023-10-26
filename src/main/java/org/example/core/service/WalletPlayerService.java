@@ -3,8 +3,8 @@ package org.example.core.service;
 
 import org.example.dao.impl.PlayerDaoImpl;
 import org.example.core.domain.Player;
-
 import java.util.*;
+import java.util.List;
 
 /**
  * Класс WalletPlayerService представляет собой сервис для управления взаимодействием с игроками.
@@ -56,6 +56,5 @@ public class WalletPlayerService implements Service<Integer, Player>{
     public static WalletPlayerService getInstance(){
         return playerService;
     }
-
 
 }

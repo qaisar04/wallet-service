@@ -1,6 +1,5 @@
 package org.example.core.service;
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +12,7 @@ import java.util.Optional;
  * @param <V> The domain entity type that the service manages (e.g., Player, Transaction).
  */
 public interface Service<T, V> {
+
     /**
      * Retrieves an entity by its unique identifier.
      *

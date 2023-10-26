@@ -3,8 +3,8 @@ package org.example.dao;
 import java.util.List;
 import java.util.Optional;
 
-public interface Dao<ID, Entity> {
-    Optional<Entity> findById(ID id);
+public interface Dao<Id, Entity> {
+    Optional<Entity> findById(Id id);
 
     List<Entity> findAll();
 
@@ -12,7 +12,7 @@ public interface Dao<ID, Entity> {
 
     void update(Entity entity);
 
-    boolean delete(ID id);
+    boolean delete(Id id);
 
     boolean deleteAll();
 }
