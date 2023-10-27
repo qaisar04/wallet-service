@@ -21,8 +21,8 @@ public class Main {
         UserHandler userHandler = new UserHandler();
         AdminHandler adminHandler = new AdminHandler();
 
-        LiquibaseDemo liquibaseDemo = LiquibaseDemo.getInstance();
-        liquibaseDemo.runMigrations();
+//        LiquibaseDemo liquibaseDemo = LiquibaseDemo.getInstance();
+//        liquibaseDemo.runMigrations();
 
         WalletConsole walletConsole = new WalletConsole();
         walletConsole.start(mainHandler, userHandler, adminHandler);

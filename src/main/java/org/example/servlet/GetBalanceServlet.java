@@ -7,11 +7,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.example.annotations.Loggable;
 import org.example.manager.PlayerManager;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 
+@Loggable
 @WebServlet("/get-balance")
 public class GetBalanceServlet extends HttpServlet {
     PlayerManager playerManager = PlayerManager.getInstance();

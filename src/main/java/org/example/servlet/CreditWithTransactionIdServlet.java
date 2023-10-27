@@ -10,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.example.annotations.Loggable;
 import org.example.core.domain.Player;
 import org.example.core.domain.Transaction;
 import org.example.core.service.WalletPlayerService;
@@ -18,6 +19,7 @@ import org.example.manager.PlayerManager;
 import java.io.IOException;
 import java.util.Optional;
 
+@Loggable
 @WebServlet("/credit-with-id")
 public class CreditWithTransactionIdServlet extends HttpServlet {
 

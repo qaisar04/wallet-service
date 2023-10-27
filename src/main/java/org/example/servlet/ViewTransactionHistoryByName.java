@@ -8,6 +8,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.example.annotations.Loggable;
 import org.example.core.domain.Player;
 import org.example.core.domain.Transaction;
 import org.example.core.service.WalletPlayerService;
@@ -22,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Loggable
 @WebServlet("/transactions")
 public class ViewTransactionHistoryByName extends HttpServlet {
 

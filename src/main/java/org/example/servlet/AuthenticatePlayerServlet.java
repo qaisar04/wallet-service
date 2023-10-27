@@ -10,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.example.annotations.Loggable;
 import org.example.core.domain.Player;
 import org.example.manager.PlayerManager;
 import org.example.util.PropertiesUtil;
@@ -23,6 +24,7 @@ public class AuthenticatePlayerServlet extends HttpServlet {
     PlayerManager playerManager = PlayerManager.getInstance();
 
     @Override
+    @Loggable
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
         ObjectMapper objectMapper = new ObjectMapper();

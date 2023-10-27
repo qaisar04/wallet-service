@@ -8,6 +8,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.example.annotations.Loggable;
 import org.example.core.domain.Audit;
 import org.example.core.service.WalletAuditService;
 import org.example.dto.AuditDto;
@@ -19,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Loggable
 @WebServlet("/all-audits")
 public class ViewAllAuditsServlet extends HttpServlet {
 
