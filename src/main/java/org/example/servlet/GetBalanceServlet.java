@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 public class GetBalanceServlet extends HttpServlet {
     PlayerManager playerManager = PlayerManager.getInstance();
 
+    @Loggable
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");

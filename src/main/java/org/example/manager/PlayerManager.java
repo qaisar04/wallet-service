@@ -51,11 +51,11 @@ public class PlayerManager {
                     .balance(BigDecimal.ZERO)
                     .build();
             playerService.save(newPlayer);
-            System.out.println("Привет, " + username + ". Вы успешно зарегистрировались.");
+            System.out.println(username + " успешно зарегистрировался.");
             audit(username, REGISTRATION, SUCCESS);
             return true;
         } else {
-            System.out.println("Пользователь с именем " + username + " уже существует. Повторите попытку с другим именем пользователя!");
+            System.out.println("Пользователь с именем " + username + " уже существует. Ошибка в регистрации пользователя!");
             audit(username, REGISTRATION, FAIL);
             return false;
         }
@@ -69,11 +69,11 @@ public class PlayerManager {
     public boolean authenticatePlayer(String username, String password) {
         Optional<Player> player = Optional.ofNullable(playerService.findByUsername(username).orElse(null));
         if (player != null && player.get().getPassword().equals(password)) {
-            System.out.println("Вы успешно вошли в систему.");
+            System.out.println(player.get().getUsername() + " успешно вошел в систему.");
             audit(username, ActionType.AUTHORIZATION, SUCCESS);
             return true;
         } else {
-            System.out.println("Ошибка авторизации. Пожалуйста, проверьте имя пользователя и пароль.");
+            System.out.println("Ошибка авторизации игрока " + player.get().getUsername());
             audit(username, ActionType.AUTHORIZATION, FAIL);
             return false;
         }
@@ -138,7 +138,7 @@ public class PlayerManager {
             transactionsService.save(transaction);
             playerService.update(player);
 
-            System.out.println("Кредитная транзакция успешно выполнена.");
+            System.out.println("Кредитная транзакция успешно выполнена игроком ");
             audit(username, CREDIT_TRANSACTION, SUCCESS);
             return true;
         } else {

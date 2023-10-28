@@ -27,6 +27,7 @@ public class ViewAllAuditsServlet extends HttpServlet {
     // для просмотра всех аудитов нужно войти от имени админа и вести token который предоставляется при авторизации
     WalletAuditService walletAuditService = WalletAuditService.getInstance();
 
+    @Loggable
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");

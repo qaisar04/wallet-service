@@ -22,7 +22,7 @@ public class TransactionDto {
     /**
      * The unique identifier of the player involved in the transaction.
      */
-    private Integer playerId;
+    private Integer transactionId;
 
     /**
      * The type of the transaction (e.g., credit or debit).
@@ -33,9 +33,6 @@ public class TransactionDto {
      * The monetary amount associated with the transaction.
      */
     private BigDecimal amount;
-
-
-
 
 }
 

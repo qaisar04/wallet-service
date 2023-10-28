@@ -18,6 +18,7 @@ import org.example.util.PropertiesUtil;
 import java.io.IOException;
 import java.util.Date;
 
+@Loggable
 @WebServlet("/authenticate")
 public class AuthenticatePlayerServlet extends HttpServlet {
 

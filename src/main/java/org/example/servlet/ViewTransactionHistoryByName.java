@@ -29,6 +29,7 @@ public class ViewTransactionHistoryByName extends HttpServlet {
 
     private final TransactionManager transactionManager = TransactionManager.getInstance();
 
+    @Loggable
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");

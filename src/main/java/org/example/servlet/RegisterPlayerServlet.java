@@ -1,7 +1,5 @@
 package org.example.servlet;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -10,24 +8,34 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.annotations.Loggable;
 import org.example.core.domain.Player;
-import org.example.core.service.WalletAuditService;
-import org.example.core.service.WalletPlayerService;
-import org.example.dto.PlayerDto;
 import org.example.manager.PlayerManager;
 
 import java.io.IOException;
-import java.util.stream.Collectors;
 
+@Loggable
 @WebServlet("/register")
 public class RegisterPlayerServlet extends HttpServlet {
 
-    PlayerManager playerManager = PlayerManager.getInstance();
+    private ObjectMapper objectMapper;
+    private PlayerManager playerManager;
 
-    @Override
+    public RegisterPlayerServlet() {
+        this.objectMapper = new ObjectMapper();
+        this.playerManager = PlayerManager.getInstance();
+    }
+
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
+    public void setPlayerManager(PlayerManager playerManager) {
+        this.playerManager = playerManager;
+    }
+
     @Loggable
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    @Override
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
-        ObjectMapper objectMapper = new ObjectMapper();
 
         try {
             Player player = objectMapper.readValue(req.getInputStream(), Player.class);
@@ -40,10 +48,9 @@ public class RegisterPlayerServlet extends HttpServlet {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 resp.getWriter().write("{\"error\": \"Registration failed\"}");
             }
-        } catch (JsonParseException | JsonMappingException e) {
+        } catch (IOException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resp.getWriter().write("{\"error\": \"Invalid JSON format\"}");
         }
     }
 }
-

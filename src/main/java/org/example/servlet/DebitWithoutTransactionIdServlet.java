@@ -15,6 +15,7 @@ import org.example.annotations.Loggable;
 import org.example.core.domain.Player;
 import org.example.core.domain.Transaction;
 import org.example.core.service.WalletPlayerService;
+import org.example.dto.TransactionDto;
 import org.example.manager.PlayerManager;
 
 import java.io.IOException;
@@ -27,6 +28,7 @@ public class DebitWithoutTransactionIdServlet extends HttpServlet {
     private final PlayerManager playerManager = PlayerManager.getInstance();
     private final WalletPlayerService walletPlayerService = WalletPlayerService.getInstance();
 
+    @Loggable
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
@@ -45,8 +47,8 @@ public class DebitWithoutTransactionIdServlet extends HttpServlet {
                 username = claims.getSubject();
             }
 
-            Transaction transaction = objectMapper.readValue(req.getInputStream(), Transaction.class);
-            Optional<Player> player = walletPlayerService.findById(transaction.getPlayerId());
+            TransactionDto transaction = objectMapper.readValue(req.getInputStream(), TransactionDto.class);
+            Optional<Player> player = walletPlayerService.findByUsername(username);
 
             boolean result = false;
             if (player.isPresent() && player.get().getUsername().equals(username)) {

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<aspectj>
-    <aspects>
-        <aspect name="org.example.aspects.LoggableAspect"/>
-    </aspects>
-    <weaver options="-verbose">
-        <include within="org.example.servlet.*"/>
-    </weaver>
-</aspectj>

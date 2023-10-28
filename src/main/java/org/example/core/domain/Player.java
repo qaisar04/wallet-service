@@ -38,6 +38,7 @@ public class Player {
     /**
      * The current balance of the player, represented as a decimal value.
      */
+    @Builder.Default
     private BigDecimal balance = BigDecimal.ZERO;
 
     public String toJson() {
