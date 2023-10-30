@@ -16,6 +16,7 @@ import org.example.core.domain.Transaction;
 import org.example.core.service.WalletPlayerService;
 import org.example.dto.TransactionDto;
 import org.example.manager.PlayerManager;
+import org.example.util.PropertiesUtil;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -26,12 +27,18 @@ public class CreditWithTransactionIdServlet extends HttpServlet {
 
     private final PlayerManager playerManager = PlayerManager.getInstance();
     private final WalletPlayerService walletPlayerService = WalletPlayerService.getInstance();
+    ObjectMapper objectMapper;
+
+    @Override
+    public void init() throws ServletException {
+        objectMapper = new ObjectMapper();
+        super.init();
+    }
 
     @Loggable
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
-        ObjectMapper objectMapper = new ObjectMapper();
 
         try {
 
@@ -40,7 +47,7 @@ public class CreditWithTransactionIdServlet extends HttpServlet {
             if (token != null && token.startsWith("Bearer ")) {
                 token = token.substring(7);
                 Claims claims = Jwts.parser()
-                        .setSigningKey("8U5r&h#KwQ9tj@Lm4ZsFpXv6T")
+                        .setSigningKey(PropertiesUtil.get("secret.key"))
                         .parseClaimsJws(token)
                         .getBody();
                 username = claims.getSubject();

@@ -14,6 +14,7 @@ import org.example.core.service.WalletAuditService;
 import org.example.dto.AuditDto;
 import org.example.dto.PlayerDto;
 import org.example.mappers.toDtoMapper;
+import org.example.util.PropertiesUtil;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -26,6 +27,13 @@ public class ViewAllAuditsServlet extends HttpServlet {
 
     // для просмотра всех аудитов нужно войти от имени админа и вести token который предоставляется при авторизации
     WalletAuditService walletAuditService = WalletAuditService.getInstance();
+    ObjectMapper objectMapper;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        objectMapper = new ObjectMapper();
+    }
 
     @Loggable
     @Override
@@ -38,7 +46,7 @@ public class ViewAllAuditsServlet extends HttpServlet {
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
             Claims claims = Jwts.parser()
-                    .setSigningKey("8U5r&h#KwQ9tj@Lm4ZsFpXv6T")
+                    .setSigningKey(PropertiesUtil.get("secret.key"))
                     .parseClaimsJws(token)
                     .getBody();
             username = claims.getSubject();
@@ -55,7 +63,6 @@ public class ViewAllAuditsServlet extends HttpServlet {
                 .map(toDtoMapper.INSTANCE::toDTO)
                 .collect(Collectors.toList());
 
-        ObjectMapper objectMapper = new ObjectMapper();
 
         if (auditsDto != null) {
             resp.setStatus(HttpServletResponse.SC_OK);

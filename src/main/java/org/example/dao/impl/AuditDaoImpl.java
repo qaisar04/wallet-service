@@ -14,6 +14,7 @@ import java.util.Optional;
 /**
  * Implementation of the AuditDao interface for interacting with the database and audit records.
  */
+
 public class AuditDaoImpl implements Dao<Integer, Audit> {
 
     private static final AuditDaoImpl auditDaoImpl = new AuditDaoImpl();

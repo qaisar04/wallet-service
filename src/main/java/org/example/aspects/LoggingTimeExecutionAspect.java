@@ -11,7 +11,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import java.util.concurrent.TimeUnit;
 
 @Aspect
-@Log4j
+@Log4j // TODO change Log4j to Slf4j
 public class LoggingTimeExecutionAspect {
 
     @Around("execution(* org.example.manager..*.*(..))")

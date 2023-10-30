@@ -21,7 +21,7 @@ public class LiquibaseDemo {
      * A singleton instance of the `LiquibaseDemo` class.
      */
     private static LiquibaseDemo liquibaseDemo = new LiquibaseDemo();
-    String sql = "CREATE SCHEMA IF NOT EXISTS migration";
+    private static final String SQL_CREATE_SCHEMA = "CREATE SCHEMA IF NOT EXISTS migration";
 
     /**
      * Runs database migrations using Liquibase.
@@ -29,7 +29,7 @@ public class LiquibaseDemo {
     public void runMigrations() {
         try {
             Connection connection = ConnectionManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(SQL_CREATE_SCHEMA);
             preparedStatement.execute();
             Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
             database.setLiquibaseSchemaName("migration");

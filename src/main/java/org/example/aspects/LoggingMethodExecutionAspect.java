@@ -10,7 +10,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import java.util.Arrays;
 
 @Aspect
-@Log4j
+@Log4j // TODO change Log4j to Slf4j
 public class LoggingMethodExecutionAspect {
 
     @Around("execution(* org.example.manager..*.*(..))")

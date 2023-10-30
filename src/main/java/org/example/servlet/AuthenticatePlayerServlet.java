@@ -22,14 +22,20 @@ import java.util.Date;
 @WebServlet("/authenticate")
 public class AuthenticatePlayerServlet extends HttpServlet {
 
-    PlayerManager playerManager = PlayerManager.getInstance();
+    private ObjectMapper objectMapper;
+    private final PlayerManager playerManager = PlayerManager.getInstance();;
+
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        objectMapper = new ObjectMapper();
+    }
 
     @Override
     @Loggable
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
-        ObjectMapper objectMapper = new ObjectMapper();
-
         try {
             Player player = objectMapper.readValue(req.getInputStream(), Player.class);
             boolean authenticateResult = playerManager.authenticatePlayer(player.getUsername(), player.getPassword());

@@ -10,7 +10,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.aspectj.lang.reflect.MethodSignature;
 
 @Aspect
-@Log4j
+@Log4j // TODO change Log4j to Slf4j
 public class LoggableAspect {
     @Pointcut("within(@org.example.annotations.Loggable *) && execution(* *(..))")
     public void annotatedByLoggable() { }

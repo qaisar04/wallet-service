@@ -16,20 +16,13 @@ import java.io.IOException;
 @WebServlet("/register")
 public class RegisterPlayerServlet extends HttpServlet {
 
+    private final PlayerManager playerManager = PlayerManager.getInstance();;
     private ObjectMapper objectMapper;
-    private PlayerManager playerManager;
 
-    public RegisterPlayerServlet() {
-        this.objectMapper = new ObjectMapper();
-        this.playerManager = PlayerManager.getInstance();
-    }
-
-    public void setObjectMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
-
-    public void setPlayerManager(PlayerManager playerManager) {
-        this.playerManager = playerManager;
+    @Override
+    public void init() throws ServletException {
+        objectMapper = new ObjectMapper();
+        super.init();
     }
 
     @Loggable

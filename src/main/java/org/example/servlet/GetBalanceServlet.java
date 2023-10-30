@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.annotations.Loggable;
 import org.example.manager.PlayerManager;
+import org.example.util.PropertiesUtil;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -27,7 +28,7 @@ public class GetBalanceServlet extends HttpServlet {
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7); // Удалить "Bearer "
             Claims claims = Jwts.parser()
-                    .setSigningKey("8U5r&h#KwQ9tj@Lm4ZsFpXv6T")
+                    .setSigningKey(PropertiesUtil.get("secret.key"))
                     .parseClaimsJws(token)
                     .getBody();
 
