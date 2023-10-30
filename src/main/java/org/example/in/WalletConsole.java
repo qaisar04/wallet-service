@@ -24,7 +24,7 @@ public class WalletConsole {
 
     public WalletConsole() {
         playerManager = new PlayerManager();
-        transactionManager = new TransactionManager(playerManager);
+        transactionManager = new TransactionManager();
     }
 
 

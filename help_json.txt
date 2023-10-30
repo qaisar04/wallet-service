@@ -1,0 +1,63 @@
+RegisterPlayerServlet POST
+http://localhost:8088/register
+{
+    "username": "your_username",
+    "password": "your_password"
+}
+
+AuthenticatePlayerServlet POST
+http://localhost:8088/authenticate
+{
+    "username": "your_username",
+    "password": "your_password"
+}
+Данный метод предоставляет вам токен который нужен будет в выполнение транзакции и просмотра самих транзакции
+
+GetBalanceServlet GET
+http://localhost:8088/get-balance
+Authorization: your_jwt_token
+
+CreditWithoutTransactionIdServlet POST
+http://localhost:8088/credit-without-id
+Authorization: your_jwt_token
+{
+    "amount": 100.0
+}
+
+CreditWithTransactionIdServlet POST
+http://localhost:8088/credit-with-id
+Authorization: your_jwt_token
+{
+    "transactionId": "your_transaction_id",
+    "amount": 100.0
+}
+
+DebitWithoutTransactionIdServlet POST
+http://localhost:8088/debit-without-id
+Authorization: your_jwt_token
+{
+    "amount": 50.0
+}
+
+DebitWithTransactionIdServlet POST
+http://localhost:8088/debit-with-id
+Authorization: your_jwt_token
+{
+    "transactionId": "your_transaction_id",
+    "amount": 50.0
+}
+
+ViewTransactionHistoryByName GET
+http://localhost:8088/transactions
+Authorization: your_jwt_token
+
+ViewAllAuditsServlet GET (просмотр только админом)
+http://localhost:8088/all-audits
+Authorization: your_admin_jwt_token
+
+
+
+
+
+
+

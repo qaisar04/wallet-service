@@ -1,4 +1,4 @@
-package org.example.core.domain;
+package org.example.dto;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,16 +9,11 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-/**
- * The `Player` class represents a player in the system.
- * It contains information about the player's details, including their unique identifier,
- * full name, password, and current balance.
- */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Player {
+public class PlayerDto {
 
     /**
      * The unique identifier of the player.
@@ -31,15 +26,10 @@ public class Player {
     private String username;
 
     /**
-     * The player's password for authentication.
-     */
-    private String password;
-
-    /**
      * The current balance of the player, represented as a decimal value.
      */
-    @Builder.Default
-    private BigDecimal balance = BigDecimal.ZERO;
+    private BigDecimal balance;
+
 
     public String toJson() {
         ObjectMapper objectMapper = new ObjectMapper();

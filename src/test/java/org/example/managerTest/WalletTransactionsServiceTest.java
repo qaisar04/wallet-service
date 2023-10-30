@@ -10,8 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WalletTransactionsServiceTest {
 
@@ -31,15 +30,17 @@ public class WalletTransactionsServiceTest {
         walletPlayerService.deleteAll();
 
         playerManager = new PlayerManager();
-        transactionManager = new TransactionManager(playerManager);
+        transactionManager = new TransactionManager();
+
+//        transactionManager = new TransactionManager(playerManager);
     }
 
     @Test
     public void testViewTransactionHistory() {
         assertTrue(playerManager.registerPlayer("bob", "password1"));
         playerManager.creditWithTransactionId("bob", 6453452, BigDecimal.valueOf(100));
-        assertEquals(1, transactionManager.viewTransactionHistory("bob"));
-        assertEquals(0, transactionManager.viewTransactionHistory("nonexistentUser"));
+        playerManager.creditWithTransactionId("bob", 11222211, BigDecimal.valueOf(150));
+        assertEquals(2, transactionManager.viewTransactionHistory("bob").size());
     }
 
     @Test

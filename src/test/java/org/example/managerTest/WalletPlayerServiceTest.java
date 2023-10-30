@@ -15,7 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class WalletPlayerServiceTest {
     private PlayerManager playerManager = new PlayerManager();
-    private TransactionManager transactionManager = new TransactionManager(playerManager);
+    private TransactionManager transactionManager = new TransactionManager();
+//    private TransactionManager transactionManager = new TransactionManager(playerManager);
 
     WalletPlayerService walletPlayerService = WalletPlayerService.getInstance();
     WalletTransactionsService walletTransactionsService = WalletTransactionsService.getInstance();
