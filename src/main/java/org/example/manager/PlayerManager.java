@@ -1,5 +1,6 @@
 package org.example.manager;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.example.core.domain.Audit;
@@ -11,7 +12,15 @@ import org.example.core.service.WalletAuditService;
 import org.example.core.service.WalletPlayerService;
 import org.example.core.service.WalletTransactionsService;
 import org.example.dto.PlayerDto;
+import org.example.dto.transaction.TransactionWithId;
+import org.example.dto.transaction.TransactionWithoutId;
 import org.example.exception.TransactionException;
+import org.example.util.JwtUtils;
+import org.example.wrapper.PlayerWrapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
@@ -23,13 +32,22 @@ import static org.example.core.domain.types.TransactionType.*;
 import static org.example.core.domain.types.TransactionType.CREDIT;
 
 
+@Component
 public class PlayerManager {
 
-    private WalletPlayerService playerService = WalletPlayerService.getInstance();
-    private WalletTransactionsService transactionsService = WalletTransactionsService.getInstance();
-    private WalletAuditService auditService = WalletAuditService.getInstance();
+    private WalletPlayerService playerService;
+    private WalletTransactionsService transactionsService;
+    private WalletAuditService auditService;
+    private JwtUtils jwtUtils;
 
-    private static final PlayerManager playerManager = new PlayerManager();
+    @Autowired
+    public PlayerManager(WalletPlayerService playerService, WalletTransactionsService transactionsService, WalletAuditService auditService, JwtUtils jwtUtils) {
+        this.playerService = playerService;
+        this.transactionsService = transactionsService;
+        this.auditService = auditService;
+        this.jwtUtils = jwtUtils;
+    }
+
     /**
      * The constructor creates a new Wallet Service object
      */
@@ -41,23 +59,22 @@ public class PlayerManager {
      *
      * @return true if registration is successful, otherwise false.
      */
-    public Boolean registerPlayer(String username, String password) {
-        Optional<Player> existingPlayer = playerService.findByUsername(username);
+    public ResponseEntity<Player> registerPlayer(PlayerWrapper playerWrapper) {
+        Player player = new Player(playerWrapper.getUsername(), playerWrapper.getPassword());
+        Optional<Player> existingPlayer = playerService.findByUsername(player.getUsername());
 
         if (existingPlayer.isEmpty()) {
             Player newPlayer = Player.builder()
-                    .username(username)
-                    .password(password)
+                    .username(player.getUsername())
+                    .password(player.getPassword())
                     .balance(BigDecimal.ZERO)
                     .build();
             playerService.save(newPlayer);
-            System.out.println(username + " успешно зарегистрировался.");
-            audit(username, REGISTRATION, SUCCESS);
-            return true;
+            audit(player.getUsername(), REGISTRATION, SUCCESS);
+            return ResponseEntity.ok(newPlayer);
         } else {
-            System.out.println("Пользователь с именем " + username + " уже существует. Ошибка в регистрации пользователя!");
-            audit(username, REGISTRATION, FAIL);
-            return false;
+            audit(player.getUsername(), REGISTRATION, FAIL);
+            return ResponseEntity.badRequest().body(new Player("error", "error"));
         }
     }
 
@@ -66,16 +83,23 @@ public class PlayerManager {
      *
      * @return true if authentication is successful, otherwise false.
      */
-    public boolean authenticatePlayer(String username, String password) {
-        Optional<Player> player = Optional.ofNullable(playerService.findByUsername(username).orElse(null));
-        if (player != null && player.get().getPassword().equals(password)) {
-            System.out.println(player.get().getUsername() + " успешно вошел в систему.");
-            audit(username, ActionType.AUTHORIZATION, SUCCESS);
-            return true;
+    public ResponseEntity<Map<String, String>> authenticatePlayer(PlayerWrapper playerWrapper) {
+        Player player = new Player(playerWrapper.getUsername(), playerWrapper.getPassword());
+
+        Optional<Player> optionalPlayer = Optional.ofNullable(playerService.findByUsername(player.getUsername()).orElse(null));
+        if (optionalPlayer.isPresent() && optionalPlayer.get().getPassword().equals(player.getPassword())) {
+
+            audit(playerWrapper.getUsername(), AUTHORIZATION, SUCCESS);
+            String jwt = jwtUtils.generateToken(optionalPlayer.get());
+
+            Map<String, String> responseMap = new HashMap<>();
+            responseMap.put("message", "Authentication is successful");
+            responseMap.put("jwt", jwt);
+            return ResponseEntity.ok(responseMap);
         } else {
-            System.out.println("Ошибка авторизации игрока " + player.get().getUsername());
-            audit(username, ActionType.AUTHORIZATION, FAIL);
-            return false;
+            Map<String, String> errorMap = Map.of("error", "Authentication is failed");
+            audit(playerWrapper.getUsername(), AUTHORIZATION, FAIL);
+            return ResponseEntity.badRequest().body(errorMap);
         }
     }
 
@@ -88,154 +112,149 @@ public class PlayerManager {
     public BigDecimal getBalance(String username) {
         Player player = playerService.findByUsername(username).orElse(null);
         if (player != null) {
-            audit(username, ActionType.BALANCE_INQUIRY, SUCCESS);
+            audit(username, BALANCE_INQUIRY, SUCCESS);
             return player.getBalance();
         } else {
-            System.out.println("Пользователь с именем " + username + " не найден.");
-            audit(username, ActionType.BALANCE_INQUIRY, FAIL);
+            audit(username, BALANCE_INQUIRY, FAIL);
             return BigDecimal.valueOf(-1.0);
         }
     }
 
-    /**
-     * The method performs a credit transaction for a player with a transaction ID.
-     *
-     * @param username     Player Name
-     * @param customId Unique Transaction ID
-     * @param amount        Transaction amount
-     * @return true if the transaction is successful, otherwise false.
-     */
-    public boolean creditWithTransactionId(String username, Integer customId, BigDecimal amount) {
+    public ResponseEntity<Map<String, String>> creditWithTransactionId(TransactionWithId transaction, String token) {
+        Map<String, String> response = new HashMap<>();
 
-        if(customId > Integer.MAX_VALUE || customId <= 0) {
-            System.out.println("Введите корректное число для идентификатороа транзакции.");
-            audit(username, CREDIT_TRANSACTION, FAIL);
-            return false;
+        if (!token.startsWith("Bearer ")) {
+            response.put("error", "Несанкционированный доступ");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        if(amount.compareTo(BigDecimal.valueOf(0)) <= 0) {
-            System.out.println("Введите корректное число для выполнения кредитной транзакции.");
-            audit(username, CREDIT_TRANSACTION, FAIL);
-            return false;
-        }
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            Claims claims = jwtUtils.getPayload(token);
+            String username = (String) claims.get("username");
 
-        Optional<Transaction> existingTransaction = transactionsService.findById(customId);
-
-        if (existingTransaction.isPresent()) {
-            System.out.println("Транзакция с таким идентификатором уже существует.");
-            audit(username, CREDIT_TRANSACTION, FAIL);
-            throw new TransactionException("Транзакция с таким идентификатором уже существует, пожалуйста, введите другой идентификатор");
-        }
-
-        Optional<Player> playerOptional = playerService.findByUsername(username);
-
-        if (playerOptional.isPresent()) {
-            Player player = playerOptional.get();
-
-            Transaction transaction = Transaction.createTransaction(customId, CREDIT, amount, player.getId());
-            player.setBalance(player.getBalance().add(amount));
-
-            transactionsService.save(transaction);
-            playerService.update(player);
-
-            System.out.println("Кредитная транзакция успешно выполнена игроком ");
-            audit(username, CREDIT_TRANSACTION, SUCCESS);
-            return true;
-        } else {
-            System.out.println("Пользователь с именем " + username + " не найден.");
-            audit(username, CREDIT_TRANSACTION, FAIL);
-            return false;
-        }
-    }
-
-    /**
-     * The method performs a debit transaction for the player with the specified name.
-     *
-     * @param username     Player Name
-     * @param сustomId Unique Transaction ID
-     * @param amount        Transaction amount
-     * @return true if the transaction is successful, otherwise false.
-     */
-    public boolean debitWithTransactionId(String username, Integer сustomId, BigDecimal amount) {
-
-        if(сustomId > Integer.MAX_VALUE || сustomId <= 0) {
-            System.out.println("Введите корректное число для идентификатороа транзакции.");
-            audit(username, DEBIT_TRANSACTION, FAIL);
-            return false;
-        }
-
-        if(amount.compareTo(BigDecimal.valueOf(0)) <= 0) {
-            System.out.println("Введите корректное число для выполнения дебетовой транзакции.");
-            audit(username, DEBIT_TRANSACTION, FAIL);
-            return false;
-        }
-        Optional<Player> playerOptional = null;
-
-        try {
-            playerOptional = playerService.findByUsername(username);
-        } catch (Exception e) {
-            audit(username, DEBIT_TRANSACTION, FAIL);
-            System.err.println("ERROR: " + e);
-        }
-
-        if (playerOptional.isPresent()) {
-            Player player = playerOptional.get();
-
-            Optional<Transaction> existingTransaction = transactionsService.findById(сustomId);
-            if (existingTransaction.isPresent()) {
-                audit(username, DEBIT_TRANSACTION, FAIL);
-                throw new TransactionException("Транзакция с таким идентификатором уже существует, пожалуйста, введите другой идентификатор");
+            if (transaction.id() <= 0 || transaction.amount().compareTo(BigDecimal.ZERO) <= 0) {
+                audit(username, CREDIT_TRANSACTION, FAIL);
+                response.put("error", "Неверные детали транзакции");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
 
-            if (player.getBalance().compareTo(amount) >= 0) {
-                Transaction transaction =  Transaction.createTransaction(сustomId, DEBIT, amount, player.getId());
-                player.setBalance(player.getBalance().subtract(amount));
+            Optional<Player> optionalPlayer = playerService.findByUsername(username);
+
+            if (!optionalPlayer.isPresent()) {
+                response.put("error", "Игрок не найден");
+                audit(username, CREDIT_TRANSACTION, FAIL);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+
+            Player player = optionalPlayer.get();
+
+            if (optionalPlayer.get().getUsername().equals(username)) {
+                Transaction successTransaction = Transaction.createTransaction(transaction.id(), CREDIT, transaction.amount(), player.getId());
+                player.setBalance(player.getBalance().add(transaction.amount()));
+
+                Optional<Transaction> existingTransaction = transactionsService.findById(transaction.id());
+
+                if (existingTransaction.isPresent()) {
+                    audit(username, CREDIT_TRANSACTION, FAIL);
+                    response.put("error", "Транзакция уже существует");
+                    return ResponseEntity.badRequest().body(response);
+                }
+
+                transactionsService.save(successTransaction);
                 playerService.update(player);
-                transactionsService.save(transaction);
-                audit(username, DEBIT_TRANSACTION, SUCCESS);
-                System.out.println("Дебетовая транзакция успешно выполнена.");
-                return true;
+                audit(username, CREDIT_TRANSACTION, SUCCESS);
+                response.put("message", "Транзакция успешно завершена");
+                return ResponseEntity.ok(response);
+
             } else {
-                System.out.println("Недостаточно средств для выполнения дебетовой транзакции.");
-                audit(username, DEBIT_TRANSACTION, FAIL);
-                return false;
+                audit(username, CREDIT_TRANSACTION, FAIL);
+                response.put("error", "Сбой кредитной транзакции");
+                return ResponseEntity.badRequest().body(response);
             }
-        } else {
-            audit(username, DEBIT_TRANSACTION, FAIL);
-            System.out.println("Пользователь с именем " + username + " не найден.");
-            return false;
         }
+        response.put("error", "Неавторизованный пользователь");
+        return ResponseEntity.badRequest().body(response);
     }
 
-    /**
-     * The method performs a credit transaction for a player without a transaction ID.
-     *
-     * @param username Player Name
-     * @param amount   Transaction amount
-     * @return true if the transaction is successful, otherwise false.
-     */
-    public boolean creditWithoutTransactionId(String username, BigDecimal amount) {
+
+    public ResponseEntity<Map<String, String>> debitWithTransactionId(TransactionWithId transaction, String token) {
+        Map<String, String> response = new HashMap<>();
+
+        if (!token.startsWith("Bearer ")) {
+            response.put("error", "Несанкционированный доступ");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            Claims claims = jwtUtils.getPayload(token);
+            String username = (String) claims.get("username");
+
+            if (transaction.id() <= 0 || transaction.amount().compareTo(BigDecimal.ZERO) <= 0) {
+                audit(username, DEBIT_TRANSACTION, FAIL);
+                response.put("error", "Неверные детали транзакции");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+
+            Optional<Player> optionalPlayer = playerService.findByUsername(username);
+
+            if (!optionalPlayer.isPresent()) {
+                audit(username, DEBIT_TRANSACTION, FAIL);
+                response.put("error", "Игрок не найден");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+
+            Player player = optionalPlayer.get();
+
+            if (optionalPlayer.get().getUsername().equals(username)) {
+                Transaction successTransaction = Transaction.createTransaction(transaction.id(), DEBIT, transaction.amount(), player.getId());
+                if(player.getBalance().compareTo(transaction.amount()) >= 0) {
+                    Optional<Transaction> existingTransaction = transactionsService.findById(transaction.id());
+
+                    if (existingTransaction.isPresent()) {
+                        audit(username, DEBIT_TRANSACTION, FAIL);
+                        response.put("error", "Транзакция уже существует");
+                        return ResponseEntity.badRequest().body(response);
+                    }
+
+                    player.setBalance(player.getBalance().subtract(transaction.amount()));
+                    transactionsService.save(successTransaction);
+                    playerService.update(player);
+                    audit(username, DEBIT_TRANSACTION, SUCCESS);
+                    response.put("message", "Транзакция успешно завершена");
+                    return ResponseEntity.ok(response);
+                } else {
+                    audit(username, DEBIT_TRANSACTION, FAIL);
+                    response.put("error", "Сбой дебетной транзакции, недостаточно средств для выполнения транзакции.");
+                    return ResponseEntity.badRequest().body(response);
+                }
+
+            } else {
+                audit(username, DEBIT_TRANSACTION, FAIL);
+                response.put("error", "Сбой дебетной транзакции");
+                return ResponseEntity.badRequest().body(response);
+            }
+        }
+        response.put("error", "Неавторизованный пользователь");
+        return ResponseEntity.badRequest().body(response);
+    }
+
+
+    public ResponseEntity<Map<String, String>> creditWithoutTransactionId(TransactionWithoutId transactionWithoutId, String token) {
         Random random = new Random();
         long randomLong = random.nextLong();
         int randomInt = (int) (randomLong & 0x7FFFFFFF);
-
-        return creditWithTransactionId(username, randomInt, amount);
+        TransactionWithId transaction = new TransactionWithId(randomInt, transactionWithoutId.amount());
+        return creditWithTransactionId(transaction, token);
     }
 
-    /**
-     * The method performs a debit transaction for a player without a transaction ID.
-     *
-     * @param username Player Name
-     * @param amount   Transaction amount
-     * @return  true if the transaction is successful, otherwise false.
-     */
-    public boolean debitWithoutTransactionId(String username, BigDecimal amount) {
+    public ResponseEntity<Map<String, String>> debitWithoutTransactionId(TransactionWithoutId transactionWithoutId, String token) {
         Random random = new Random();
         long randomLong = random.nextLong();
         int randomInt = (int) (randomLong & 0x7FFFFFFF);
-
-
-        return debitWithTransactionId(username, randomInt, amount);
+        TransactionWithId transaction = new TransactionWithId(randomInt, transactionWithoutId.amount());
+        return debitWithTransactionId(transaction, token);
     }
 
     /**
@@ -252,10 +271,6 @@ public class PlayerManager {
                 .auditType(auditType)
                 .build();
         auditService.save(audit);
-    }
-
-    public static PlayerManager getInstance() {
-        return playerManager;
     }
 
 }

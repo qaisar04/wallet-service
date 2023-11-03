@@ -1,6 +1,11 @@
 package org.example.util;
 
 
+import org.example.сonfiguration.YamlPropertySourceFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -8,6 +13,8 @@ import java.sql.SQLException;
 /**
  * Utility class for managing database connections using JDBC.
  */
+@Component
+@PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 public class ConnectionManager {
 
     /**
@@ -16,20 +23,24 @@ public class ConnectionManager {
      * @return A database connection.
      * @throws RuntimeException if a database connection cannot be established.
      */
-    private static final String URL_KEY = "db.url";
-    private static final String USERNAME_KEY = "db.username";
-    private static final String PASSWORD_KEY = "db.password";
-    public static final String DRIVER_KEY = "db.driver";
+    @Value("${db.url}")
+    private String url;
+    @Value("${db.driver}")
+    private String driver;
+    @Value("${db.username}")
+    private String username;
+    @Value("${db.password}")
+    private String password;
 
-    public static Connection getConnection() {
+    public Connection getConnection() {
         try {
-
-            Class.forName(PropertiesUtil.get(DRIVER_KEY));
+            Class.forName(driver);
 
             return DriverManager.getConnection(
-                    PropertiesUtil.get(URL_KEY),
-                    PropertiesUtil.get(USERNAME_KEY),
-                    PropertiesUtil.get(PASSWORD_KEY));
+                    url,
+                    username,
+                    password
+            );
         } catch (SQLException e) {
             throw new RuntimeException("Failed to get a database connection.", e);
         } catch (ClassNotFoundException e) {

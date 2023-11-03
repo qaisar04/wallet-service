@@ -5,6 +5,8 @@ import org.example.core.domain.types.ActionType;
 import org.example.core.domain.types.AuditType;
 import org.example.dao.Dao;
 import org.example.util.ConnectionManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,10 +16,16 @@ import java.util.Optional;
 /**
  * Implementation of the AuditDao interface for interacting with the database and audit records.
  */
-
+@Repository
 public class AuditDaoImpl implements Dao<Integer, Audit> {
 
-    private static final AuditDaoImpl auditDaoImpl = new AuditDaoImpl();
+
+    private ConnectionManager connectionManager;
+
+    @Autowired
+    public AuditDaoImpl(ConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
 
     /**
      * Find an audit record by its identifier.
@@ -32,7 +40,7 @@ public class AuditDaoImpl implements Dao<Integer, Audit> {
                 WHERE id=?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindById)) {
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -59,7 +67,7 @@ public class AuditDaoImpl implements Dao<Integer, Audit> {
                 """;
 
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindByUsername)) {
             preparedStatement.setObject(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -82,7 +90,7 @@ public class AuditDaoImpl implements Dao<Integer, Audit> {
                 SELECT * FROM wallet.audits;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindAll)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -112,7 +120,7 @@ public class AuditDaoImpl implements Dao<Integer, Audit> {
             VALUES (?,?,?);
             """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlSave, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setObject(1, audit.getPlayerFullName());
@@ -156,7 +164,7 @@ public class AuditDaoImpl implements Dao<Integer, Audit> {
                 WHERE id = ?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate)) {
 
             preparedStatement.setObject(1, audit.getAuditType());
@@ -182,7 +190,7 @@ public class AuditDaoImpl implements Dao<Integer, Audit> {
                 WHERE id = ?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteById)) {
             preparedStatement.setObject(1, id);
 
@@ -204,7 +212,7 @@ public class AuditDaoImpl implements Dao<Integer, Audit> {
                 DELETE FROM wallet.audits
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteById)) {
 
             return preparedStatement.executeUpdate() > 0;
@@ -229,11 +237,15 @@ public class AuditDaoImpl implements Dao<Integer, Audit> {
                 .build();
     }
 
-    private AuditDaoImpl() {}
+    // TODO: изменить получение обьекта в тестах
+    private static final AuditDaoImpl auditDaoImpl = new AuditDaoImpl();
 
     public static AuditDaoImpl getInstance() {
         return auditDaoImpl;
     }
+
+    private AuditDaoImpl() {}
+
 }
 
 

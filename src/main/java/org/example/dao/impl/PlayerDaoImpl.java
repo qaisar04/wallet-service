@@ -3,15 +3,23 @@ package org.example.dao.impl;
 import org.example.dao.Dao;
 import org.example.core.domain.Player;
 import org.example.util.ConnectionManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public class PlayerDaoImpl implements Dao<Integer, Player> {
 
-    private static final PlayerDaoImpl playerDaoImpl = new PlayerDaoImpl();
+    private ConnectionManager connectionManager;
+
+    @Autowired
+    public PlayerDaoImpl(ConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
 
     @Override
     public Optional<Player> findById(Integer id) {
@@ -20,7 +28,7 @@ public class PlayerDaoImpl implements Dao<Integer, Player> {
                 WHERE id=?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindById)) {
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -40,7 +48,7 @@ public class PlayerDaoImpl implements Dao<Integer, Player> {
                 WHERE username=?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindByUsername)) {
             preparedStatement.setObject(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -63,7 +71,7 @@ public class PlayerDaoImpl implements Dao<Integer, Player> {
                 SELECT * FROM wallet.players;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindAll)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -87,7 +95,7 @@ public class PlayerDaoImpl implements Dao<Integer, Player> {
                 VALUES (?,?,?);
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlSave, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setString(1, player.getUsername());
@@ -117,7 +125,7 @@ public class PlayerDaoImpl implements Dao<Integer, Player> {
                 WHERE id = ?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate)) {
 
             preparedStatement.setString(1, player.getUsername());
@@ -137,7 +145,7 @@ public class PlayerDaoImpl implements Dao<Integer, Player> {
                 WHERE id = ?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteById)) {
             preparedStatement.setObject(1, id);
             return preparedStatement.executeUpdate() > 0;
@@ -154,7 +162,7 @@ public class PlayerDaoImpl implements Dao<Integer, Player> {
                 DELETE FROM wallet.players
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteById)) {
 
             return preparedStatement.executeUpdate() > 0;
@@ -165,6 +173,7 @@ public class PlayerDaoImpl implements Dao<Integer, Player> {
     }
 
     private Player buildUser(ResultSet resultSet) throws SQLException {
+
         return Player.builder()
                 .id(resultSet.getObject("id", Integer.class))
                 .username(resultSet.getString("username"))
@@ -173,9 +182,13 @@ public class PlayerDaoImpl implements Dao<Integer, Player> {
                 .build();
     }
 
-    private PlayerDaoImpl() {}
+    // TODO: изменить получение обьекта в тестах
+    private static final PlayerDaoImpl playerDaoImpl = new PlayerDaoImpl();
 
     public static PlayerDaoImpl getInstance() {
         return playerDaoImpl;
+    }
+
+    private PlayerDaoImpl() {
     }
 }

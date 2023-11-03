@@ -4,6 +4,8 @@ import org.example.core.domain.types.TransactionType;
 import org.example.dao.Dao;
 import org.example.core.domain.Transaction;
 import org.example.util.ConnectionManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,9 +15,16 @@ import java.util.Optional;
 /**
  * Implementation of the TransactionDao interface for managing transaction data in the "wallet_service_db" database.
  */
+@Repository
 public class TransactionDaoImpl implements Dao<Integer, Transaction> {
 
-    private static final TransactionDaoImpl transactionDaoImpl = new TransactionDaoImpl();
+
+    private ConnectionManager connectionManager;
+
+    @Autowired
+    public TransactionDaoImpl(ConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
 
     /**
      * Retrieve a transaction by its ID.
@@ -30,7 +39,7 @@ public class TransactionDaoImpl implements Dao<Integer, Transaction> {
                 WHERE transaction_id=?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindById)) {
             preparedStatement.setObject(1, transactionId);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -58,7 +67,7 @@ public class TransactionDaoImpl implements Dao<Integer, Transaction> {
 
         List<Transaction> transactions = new ArrayList<>();
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindById)) {
             preparedStatement.setObject(1, playerId);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -85,7 +94,7 @@ public class TransactionDaoImpl implements Dao<Integer, Transaction> {
                 SELECT * FROM wallet.transactions;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindAll)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -115,7 +124,7 @@ public class TransactionDaoImpl implements Dao<Integer, Transaction> {
                 VALUES (?,?,?,?);
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlSave, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setObject(1, transaction.getTransactionId());
@@ -152,7 +161,7 @@ public class TransactionDaoImpl implements Dao<Integer, Transaction> {
                 WHERE transaction_id = ?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate)) {
 
             preparedStatement.setObject(1, transaction.getType(), Types.OTHER);
@@ -178,7 +187,7 @@ public class TransactionDaoImpl implements Dao<Integer, Transaction> {
                 WHERE transaction_id = ?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteById)) {
             preparedStatement.setObject(1, id);
 
@@ -200,7 +209,7 @@ public class TransactionDaoImpl implements Dao<Integer, Transaction> {
                 DELETE FROM wallet.transactions
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteById)) {
 
             return preparedStatement.executeUpdate() > 0;
@@ -229,16 +238,13 @@ public class TransactionDaoImpl implements Dao<Integer, Transaction> {
                 .build();
     }
 
-    private TransactionDaoImpl() {}
+    // TODO: изменить получение обьекта в тестах
+    private static final TransactionDaoImpl transactionDaoImpl = new TransactionDaoImpl();
 
-    /**
-     * Get the singleton instance of the TransactionDaoImpl class.
-     *
-     * @return The singleton instance of TransactionDaoImpl.
-     */
     public static TransactionDaoImpl getInstance() {
         return transactionDaoImpl;
     }
 
+    private TransactionDaoImpl() { }
 
 }

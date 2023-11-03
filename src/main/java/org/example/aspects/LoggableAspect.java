@@ -1,17 +1,16 @@
 package org.example.aspects;
 
-import lombok.extern.log4j.Log4j;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.apache.commons.lang3.time.StopWatch;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.stereotype.Component;
 
 @Aspect
-@Log4j // TODO change Log4j to Slf4j
+@Component
 public class LoggableAspect {
+
     @Pointcut("within(@org.example.annotations.Loggable *) && execution(* *(..))")
     public void annotatedByLoggable() { }
 
@@ -19,20 +18,21 @@ public class LoggableAspect {
     public Object logging(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
 
-        final StopWatch stopWatch = new StopWatch();
+        final org.apache.commons.lang3.time.StopWatch stopWatch = new org.apache.commons.lang3.time.StopWatch();
         stopWatch.start();
 
-        log.info("Calling method " + methodSignature.toShortString());
+        System.out.println("__ __ __ __ __ __ __ __ __ __ __");
+        System.out.println("Calling method " + methodSignature.toShortString());
         long startTime = System.currentTimeMillis();
         Object result = proceedingJoinPoint.proceed();
         long endTime = System.currentTimeMillis();
 
         stopWatch.stop();
-        log.info("Execution of method " + methodSignature.toShortString() +
+        System.out.println("Execution of method " + methodSignature.toShortString() +
                  " finished. Execution time is " + (endTime - startTime) + " ms");
+        System.out.println("__ __ __ __ __ __ __ __ __ __ __");
         return result;
     }
 
 }
-
 

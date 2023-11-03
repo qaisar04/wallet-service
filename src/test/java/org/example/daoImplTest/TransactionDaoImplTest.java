@@ -27,6 +27,7 @@ public class TransactionDaoImplTest extends ContainersEnvironment {
     public void setUp() {
         transactionDao = TransactionDaoImpl.getInstance();
         playerDao = PlayerDaoImpl.getInstance();
+
         transactionDao.deleteAll();
         playerDao.deleteAll();
 

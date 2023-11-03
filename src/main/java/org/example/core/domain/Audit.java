@@ -1,12 +1,12 @@
 package org.example.core.domain;
 
-import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.core.domain.types.ActionType;
 import org.example.core.domain.types.AuditType;
+import org.springframework.stereotype.Component;
 
 /**
  * The `Audit` class represents an audit record in the system.
