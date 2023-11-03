@@ -1,8 +1,6 @@
 package org.example.manager;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.example.core.domain.Audit;
 import org.example.core.domain.Player;
 import org.example.core.domain.Transaction;
@@ -11,10 +9,8 @@ import org.example.core.domain.types.AuditType;
 import org.example.core.service.WalletAuditService;
 import org.example.core.service.WalletPlayerService;
 import org.example.core.service.WalletTransactionsService;
-import org.example.dto.PlayerDto;
 import org.example.dto.transaction.TransactionWithId;
 import org.example.dto.transaction.TransactionWithoutId;
-import org.example.exception.TransactionException;
 import org.example.util.JwtUtils;
 import org.example.wrapper.PlayerWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.security.SecureRandom;
 import java.util.*;
 
 import static org.example.core.domain.types.ActionType.*;
@@ -31,7 +26,28 @@ import static org.example.core.domain.types.AuditType.*;
 import static org.example.core.domain.types.TransactionType.*;
 import static org.example.core.domain.types.TransactionType.CREDIT;
 
-
+/**
+ * The {@code PlayerManager} class is a component in the Spring application responsible for managing player-related
+ * operations. It handles player registration, authentication, balance inquiries, and credit/debit transactions.
+ *
+ * <p>PlayerManager interacts with services responsible for player management, transactions, and auditing. It uses JWT
+ * tokens for authentication and authorization.
+ *
+ * <p>This class provides the following functionalities:
+ * - Player registration: It allows the registration of new players by creating player accounts.
+ * - Player authentication: It verifies the player's credentials and generates JWT tokens for authenticated players.
+ * - Balance inquiry: It retrieves the balance of a player.
+ * - Credit and debit transactions: It performs credit and debit transactions for players.
+ *
+ * <p>Example usage:
+ * <pre>
+ * // Create an instance of PlayerManager in your Spring application.
+ * &#64;Autowired
+ * private PlayerManager playerManager;
+ * </pre>
+ *
+ * The class is annotated with `@Component` for Spring component scanning.
+ */
 @Component
 public class PlayerManager {
 
@@ -39,6 +55,7 @@ public class PlayerManager {
     private WalletTransactionsService transactionsService;
     private WalletAuditService auditService;
     private JwtUtils jwtUtils;
+
 
     @Autowired
     public PlayerManager(WalletPlayerService playerService, WalletTransactionsService transactionsService, WalletAuditService auditService, JwtUtils jwtUtils) {
@@ -55,9 +72,10 @@ public class PlayerManager {
     }
 
     /**
-     * The method registers a new player with the specified name and password.
+     * Registers a new player with the specified username and password.
      *
-     * @return true if registration is successful, otherwise false.
+     * @param playerWrapper A {@code PlayerWrapper} object containing player registration details.
+     * @return A ResponseEntity containing the registered player.
      */
     public ResponseEntity<Player> registerPlayer(PlayerWrapper playerWrapper) {
         Player player = new Player(playerWrapper.getUsername(), playerWrapper.getPassword());
@@ -79,9 +97,10 @@ public class PlayerManager {
     }
 
     /**
-     * The method authenticates the player by username and password.
+     * Authenticates the player by username and password, generating a JWT token upon successful authentication.
      *
-     * @return true if authentication is successful, otherwise false.
+     * @param playerWrapper A {@code PlayerWrapper} object containing player authentication details.
+     * @return A ResponseEntity containing a JWT token upon successful authentication.
      */
     public ResponseEntity<Map<String, String>> authenticatePlayer(PlayerWrapper playerWrapper) {
         Player player = new Player(playerWrapper.getUsername(), playerWrapper.getPassword());
@@ -104,22 +123,49 @@ public class PlayerManager {
     }
 
     /**
-     * The method returns the balance of the player with the specified name.
+     * Retrieves the balance of the player with the specified username.
      *
-     * @param username The player's name.
-     * @return The player's balance.
+     * @param token      The JWT token for authorization.
+     * @return A ResponseEntity containing the transaction result.
      */
-    public BigDecimal getBalance(String username) {
-        Player player = playerService.findByUsername(username).orElse(null);
-        if (player != null) {
-            audit(username, BALANCE_INQUIRY, SUCCESS);
-            return player.getBalance();
-        } else {
-            audit(username, BALANCE_INQUIRY, FAIL);
-            return BigDecimal.valueOf(-1.0);
+    public ResponseEntity<Map<String, String>> getBalance(String token) {
+        Map<String, String> response = new HashMap<>();
+
+        if (!token.startsWith("Bearer ")) {
+            response.put("error", "Несанкционированный доступ");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
+
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            Claims claims = jwtUtils.getPayload(token);
+            String username = (String) claims.get("username");
+
+            Player player = playerService.findByUsername(username).orElse(null);
+            if (player != null) {
+                audit(username, BALANCE_INQUIRY, SUCCESS);
+                String balance = String.valueOf(player.getBalance());
+                response.put("balance", balance);
+                return ResponseEntity.ok(response);
+            } else {
+                audit(username, BALANCE_INQUIRY, FAIL);
+                response.put("error", "Игрок не найден в базе данных");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        }
+
+        response.put("error", "Неавторизованный пользователь");
+        return ResponseEntity.badRequest().body(response);
     }
 
+
+    /**
+     * Performs a credit transaction for a player using a transaction ID, checking for authorization and validation.
+     *
+     * @param transaction A {@code TransactionWithId} object containing transaction details.
+     * @param token      The JWT token for authorization.
+     * @return A ResponseEntity containing the transaction result.
+     */
     public ResponseEntity<Map<String, String>> creditWithTransactionId(TransactionWithId transaction, String token) {
         Map<String, String> response = new HashMap<>();
 
@@ -178,6 +224,13 @@ public class PlayerManager {
     }
 
 
+    /**
+     * Performs a debit transaction for a player using a transaction ID, checking for authorization and validation.
+     *
+     * @param transaction A {@code TransactionWithId} object containing transaction details.
+     * @param token      The JWT token for authorization.
+     * @return A ResponseEntity containing the transaction result.
+     */
     public ResponseEntity<Map<String, String>> debitWithTransactionId(TransactionWithId transaction, String token) {
         Map<String, String> response = new HashMap<>();
 
@@ -240,7 +293,13 @@ public class PlayerManager {
         return ResponseEntity.badRequest().body(response);
     }
 
-
+    /**
+     * Performs a credit transaction for a player without a specific transaction ID, generating a random ID.
+     *
+     * @param transactionWithoutId A {@code TransactionWithoutId} object containing transaction details.
+     * @param token                The JWT token for authorization.
+     * @return A ResponseEntity containing the transaction result.
+     */
     public ResponseEntity<Map<String, String>> creditWithoutTransactionId(TransactionWithoutId transactionWithoutId, String token) {
         Random random = new Random();
         long randomLong = random.nextLong();
@@ -249,6 +308,13 @@ public class PlayerManager {
         return creditWithTransactionId(transaction, token);
     }
 
+    /**
+     * Performs a debit transaction for a player without a specific transaction ID, generating a random ID.
+     *
+     * @param transactionWithoutId A {@code TransactionWithoutId} object containing transaction details.
+     * @param token                The JWT token for authorization.
+     * @return A ResponseEntity containing the transaction result.
+     */
     public ResponseEntity<Map<String, String>> debitWithoutTransactionId(TransactionWithoutId transactionWithoutId, String token) {
         Random random = new Random();
         long randomLong = random.nextLong();
@@ -258,11 +324,11 @@ public class PlayerManager {
     }
 
     /**
-     * Registers audit records of user actions.
+     * Registers audit records for user actions.
      *
-     * @param username   The name of the user for whom the audit is being registered.
-     * @param actionType The type of action being performed (for example, REGISTRATION, AUTHORIZATION).
-     * @param auditType  Type of audit result (for example, SUCCESS, FAIL).
+     * @param username   The name of the user for whom the audit is registered.
+     * @param actionType The type of action being performed (e.g., REGISTRATION, AUTHORIZATION).
+     * @param auditType  The type of audit result (e.g., SUCCESS, FAIL).
      */
     public void audit(String username, ActionType actionType, AuditType auditType) {
         Audit audit = Audit.builder()

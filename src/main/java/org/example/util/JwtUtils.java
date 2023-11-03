@@ -23,6 +23,20 @@ import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.Date;
 
+/**
+ * The {@code JwtUtils} class provides utility methods for working with JSON Web Tokens (JWT) in the application.
+ *
+ * <p>It is responsible for generating JWT tokens for player authentication and decoding JWT tokens to extract claims.
+ *
+ * <p>Example usage:
+ * <pre>
+ * // Create an instance of JwtUtils in your Spring application.
+ * &#64;Autowired
+ * private JwtUtils jwtUtils;
+ * </pre>
+ *
+ * The class is annotated with `@Component` for Spring component scanning.
+ */
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 @Component
 public class JwtUtils {
@@ -34,6 +48,12 @@ public class JwtUtils {
         this.securityConfig = securityConfig;
     }
 
+    /**
+     * Generates a JWT token for a player based on their information.
+     *
+     * @param player The player for whom the token is generated.
+     * @return The generated JWT token as a string.
+     */
     public String generateToken(Player player) {
 
         return Jwts.builder()
@@ -47,6 +67,13 @@ public class JwtUtils {
 
     }
 
+    /**
+     * Parses and verifies a JWT token to extract its payload claims.
+     *
+     * @param token The JWT token to parse.
+     * @return The claims extracted from the token's payload.
+     * @throws RuntimeException if there is an issue parsing or verifying the token.
+     */
     public Claims getPayload(String token) {
         try {
             return Jwts.parser()
