@@ -180,6 +180,8 @@
             <artifactId>springfox-oas</artifactId>
             <version>${springfox.version}</version>
         </dependency>
+
+
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>

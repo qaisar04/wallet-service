@@ -36,9 +36,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 public class Swagger2Config implements WebMvcConfigurer {
 
-//     http://localhost:8080/swagger-ui/index.html
-//     http://localhost:8080/v2/api-docs
-
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
