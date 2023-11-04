@@ -13,7 +13,8 @@ import org.mapstruct.factory.Mappers;
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
-)public interface TransactionMapper {
+)
+public interface TransactionMapper {
     TransactionMapper INSTANCE = Mappers.getMapper(TransactionMapper.class);
 
     @Mapping(source = "transactionId", target = "transactionId")

@@ -13,7 +13,8 @@ import org.mapstruct.factory.Mappers;
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
-)public interface AuditMapper {
+)
+public interface AuditMapper {
     AuditMapper INSTANCE = Mappers.getMapper(AuditMapper.class);
 
     @Mapping(source = "playerFullName", target = "playerFullName")

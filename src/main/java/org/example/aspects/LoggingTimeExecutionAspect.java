@@ -1,5 +1,7 @@
 package org.example.aspects;
 
+import lombok.extern.log4j.Log4j;
+import org.apache.commons.lang3.time.StopWatch;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -30,6 +32,7 @@ import java.util.concurrent.TimeUnit;
  * of the package where this aspect is defined.
  */
 @Aspect
+@Log4j
 @Component
 public class LoggingTimeExecutionAspect {
 
@@ -44,20 +47,21 @@ public class LoggingTimeExecutionAspect {
     @Around("execution(* org.example.manager..*.*(..))")
     public Object logMethodExecutionTime(ProceedingJoinPoint pjp) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
-        final var stopWatch = new org.apache.commons.lang3.time.StopWatch();
+        final var stopWatch = new StopWatch();
 
         stopWatch.start();
         var result = pjp.proceed();
         stopWatch.stop();
-        System.out.println("__ __ __ __ __ __ __ __ __ __ __");
-        System.out.println(
+
+        log.info("__ __ __ __ __ __ __ __ __ __ __");
+        log.info(
                 "%s.%s :: %s ms".formatted(
                         methodSignature.getDeclaringType().getSimpleName(), // class name
                         methodSignature.getName(), // method name
                         stopWatch.getTime(TimeUnit.MILLISECONDS) // execution time in milliseconds
                 )
         );
-        System.out.println("__ __ __ __ __ __ __ __ __ __ __");
+        log.info("__ __ __ __ __ __ __ __ __ __ __");
 
         return result;
     }

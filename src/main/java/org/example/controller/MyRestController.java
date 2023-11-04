@@ -72,7 +72,6 @@ import java.util.Map;
     public ResponseEntity<Map<String, String>> viewPlayerBalance(
             @RequestHeader("Authorization") String token) {
         return playerManager.getBalance(token);
-
     }
 
 

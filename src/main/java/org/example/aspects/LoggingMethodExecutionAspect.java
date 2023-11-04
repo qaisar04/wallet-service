@@ -1,5 +1,6 @@
 package org.example.aspects;
 
+import lombok.extern.log4j.Log4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Component;
  * where this aspect is defined.
  */
 @Aspect
+@Log4j
 @Component
 public class LoggingMethodExecutionAspect {
 
@@ -36,15 +38,16 @@ public class LoggingMethodExecutionAspect {
         MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
         String methodName = methodSignature.getName();
         String className = methodSignature.getDeclaringType().getSimpleName();
-        System.out.println("__ __ __ __ __ __ __ __ __ __ __");
-        System.out.println("Executing method " + methodName + " in class " + className);
+
+        log.info("__ __ __ __ __ __ __ __ __ __ __");
+        log.info("Executing method " + methodName + " in class " + className);
 
         long startTime = System.currentTimeMillis();
         Object result = pjp.proceed();
         long endTime = System.currentTimeMillis();
 
-        System.out.println("Method " + methodName + " in class " + className + " completed in " + (endTime - startTime) + " ms.");
-        System.out.println("__ __ __ __ __ __ __ __ __ __ __");
+        log.info("Method " + methodName + " in class " + className + " completed in " + (endTime - startTime) + " ms.");
+        log.info("__ __ __ __ __ __ __ __ __ __ __");
 
         return result;
     }

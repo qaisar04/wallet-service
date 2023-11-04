@@ -65,13 +65,7 @@ public class DebitTransactionController {
     public ResponseEntity<Map<String, String>> debitTransactionWithTransactionId(
             @RequestBody TransactionWithId transaction,
             @RequestHeader("Authorization") String token) {
-        try {
             return playerManager.debitWithTransactionId(transaction, token);
-        } catch (TransactionException e) {
-            Map<String, String> debitWithTransactionIdResponse = new HashMap<>();
-            debitWithTransactionIdResponse.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(debitWithTransactionIdResponse);
-        }
     }
 
     /**
@@ -88,13 +82,7 @@ public class DebitTransactionController {
     public ResponseEntity<Map<String, String>> debitTransactionWithoutTransactionId(
             @RequestBody TransactionWithoutId transaction,
             @RequestHeader("Authorization") String token) {
-        try {
             return playerManager.debitWithoutTransactionId(transaction, token);
-        } catch (TransactionException e) {
-            Map<String, String> debitWithTransactionIdResponse = new HashMap<>();
-            debitWithTransactionIdResponse.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(debitWithTransactionIdResponse);
-        }
     }
 }
 

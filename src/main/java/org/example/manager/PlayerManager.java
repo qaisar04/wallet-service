@@ -187,7 +187,7 @@ public class PlayerManager {
 
             Optional<Player> optionalPlayer = playerService.findByUsername(username);
 
-            if (!optionalPlayer.isPresent()) {
+            if (optionalPlayer.isEmpty()) {
                 response.put("error", "Игрок не найден");
                 audit(username, CREDIT_TRANSACTION, FAIL);
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
@@ -252,7 +252,7 @@ public class PlayerManager {
 
             Optional<Player> optionalPlayer = playerService.findByUsername(username);
 
-            if (!optionalPlayer.isPresent()) {
+            if (optionalPlayer.isEmpty()) {
                 audit(username, DEBIT_TRANSACTION, FAIL);
                 response.put("error", "Игрок не найден");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);

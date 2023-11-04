@@ -11,7 +11,8 @@ import org.mapstruct.factory.Mappers;
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
-)public interface PlayerMapper {
+)
+public interface PlayerMapper {
     PlayerMapper INSTANCE = Mappers.getMapper(PlayerMapper.class);
 
     @Mapping(source = "id", target = "id")

@@ -62,13 +62,7 @@ public class CreditTransactionController {
     public ResponseEntity<Map<String, String>> creditTransactionWithTransactionId(
             @RequestBody TransactionWithId transaction,
             @RequestHeader("Authorization") String token) {
-        try {
             return playerManager.creditWithTransactionId(transaction, token);
-        } catch (TransactionException e) {
-            Map<String, String> creditWithTransactionIdResponse = new HashMap<>();
-            creditWithTransactionIdResponse.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(creditWithTransactionIdResponse);
-        }
     }
 
     /**
@@ -85,12 +79,6 @@ public class CreditTransactionController {
     public ResponseEntity<Map<String, String>> creditTransactionWithoutTransactionId(
             @RequestBody TransactionWithoutId transaction,
             @RequestHeader("Authorization") String token) {
-        try {
             return playerManager.creditWithoutTransactionId(transaction, token);
-        } catch (Exception e) {
-            Map<String, String> creditWithoutTransactionIdResponse = new HashMap<>();
-            creditWithoutTransactionIdResponse.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(creditWithoutTransactionIdResponse);
-        }
     }
 }

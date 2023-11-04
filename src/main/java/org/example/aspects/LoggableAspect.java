@@ -1,5 +1,7 @@
 package org.example.aspects;
 
+import lombok.extern.log4j.Log4j;
+import org.apache.commons.lang3.time.StopWatch;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -30,10 +32,10 @@ import org.springframework.stereotype.Component;
  * The aspect can be enabled or disabled globally by enabling or disabling component scanning of the package
  * where this aspect is defined.
  */
-@Aspect
 @Component
+@Aspect
+@Log4j
 public class LoggableAspect {
-
     @Pointcut("within(@org.example.annotations.Loggable *) && execution(* *(..))")
     public void annotatedByLoggable() { }
 
@@ -41,19 +43,21 @@ public class LoggableAspect {
     public Object logging(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
 
-        final org.apache.commons.lang3.time.StopWatch stopWatch = new org.apache.commons.lang3.time.StopWatch();
+        final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
-        System.out.println("__ __ __ __ __ __ __ __ __ __ __");
-        System.out.println("Calling method " + methodSignature.toShortString());
         long startTime = System.currentTimeMillis();
         Object result = proceedingJoinPoint.proceed();
         long endTime = System.currentTimeMillis();
 
         stopWatch.stop();
-        System.out.println("Execution of method " + methodSignature.toShortString() +
+
+        log.info("__ __ __ __ __ __ __ __ __ __ __");
+        log.info("Calling method " + methodSignature.toShortString());
+        log.info("Execution of method " + methodSignature.toShortString() +
                  " finished. Execution time is " + (endTime - startTime) + " ms");
-        System.out.println("__ __ __ __ __ __ __ __ __ __ __");
+        log.info("__ __ __ __ __ __ __ __ __ __ __");
+
         return result;
     }
 

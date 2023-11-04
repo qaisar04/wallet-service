@@ -56,11 +56,6 @@ public class AuthenticatePlayerController {
     @ApiOperation(value = "post method for authenticate player", response = HashMap.class)
     @PostMapping
     public ResponseEntity<?> authenticatePlayer(@RequestBody PlayerWrapper playerWrapper) {
-        try {
             return playerManager.authenticatePlayer(playerWrapper);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
-        }
     }
 }
