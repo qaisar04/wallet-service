@@ -1,82 +1,111 @@
 package org.example.manager;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import org.example.core.domain.Audit;
 import org.example.core.domain.Player;
 import org.example.core.domain.Transaction;
 import org.example.core.service.WalletAuditService;
 import org.example.core.service.WalletPlayerService;
 import org.example.core.service.WalletTransactionsService;
+import org.example.dto.AuditDto;
+import org.example.dto.TransactionDto;
+import org.example.mapper.AuditMapper;
+import org.example.mapper.TransactionMapper;
+import org.example.util.JwtUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.example.core.domain.types.ActionType.VIEW_TRANSACTION_HISTORY;
 import static org.example.core.domain.types.AuditType.*;
 
+@Component
 public class TransactionManager {
-    private PlayerManager playerManager = PlayerManager.getInstance();
-    private WalletPlayerService playerService = WalletPlayerService.getInstance();
-    private WalletTransactionsService transactionsService = WalletTransactionsService.getInstance();
-    private WalletAuditService auditService = WalletAuditService.getInstance();
 
-    public static final TransactionManager transactionManager = new TransactionManager();
+    private final PlayerManager playerManager;
+    private final WalletPlayerService playerService;
+    private final WalletTransactionsService transactionsService;
+    private final WalletAuditService auditService;
+    private JwtUtils jwtUtils;
 
-    public static TransactionManager getInstance() {
-        return transactionManager;
+
+    @Autowired
+    public TransactionManager(PlayerManager playerManager, WalletPlayerService playerService, WalletTransactionsService transactionsService, WalletAuditService auditService, JwtUtils jwtUtils) {
+        this.playerManager = playerManager;
+        this.playerService = playerService;
+        this.transactionsService = transactionsService;
+        this.auditService = auditService;
+        this.jwtUtils = jwtUtils;
     }
-
-
 
     /**
      * The method looks at the audit of the players' actions.
      *
      * @return The number of records in the audit.
      */
-    public int viewAllAudits() {
-        List<Audit> audits = auditService.findAll();
-        for (Audit audit : audits) {
-            String formattedOutput = String.format("%-20s | %-15s | %-15s | %d",
-                    audit.getPlayerFullName(),
-                    audit.getAuditType(),
-                    audit.getActionType(),
-                    audit.getId());
-            System.out.println(formattedOutput);
+    public ResponseEntity<HashMap<String, Object>> viewAllAudits(String token) {
+        HashMap<String, Object> response = new HashMap<>();
+
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            Claims claims = jwtUtils.getPayload(token);
+            String username = (String) claims.get("username");
+
+            if(username.equals("admin")) {
+                List<Audit> audits = auditService.findAll();
+
+                List<AuditDto> auditsDto = audits.stream()
+                        .map(AuditMapper.INSTANCE::toDTO)
+                        .collect(Collectors.toList());
+
+                response.put("audits", auditsDto);
+                return ResponseEntity.ok(response);
+            }
+            else {
+                response.put("error", "Log in from the admin account");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        } else {
+            response.put("error", "Unauthorized");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-        return audits.size();
     }
 
-    /**
-     * The method looks at the transaction history for the player with the specified name.
-     *
-     * @param username The player's name.
-     */
-    public List<Transaction> viewTransactionHistory(String username) {
-        Optional<Player> optionalPlayer = playerService.findByUsername(username);
+    public ResponseEntity<HashMap<String, Object>> viewTransactionHistory(String token) {
+        HashMap<String, Object> response = new HashMap<>();
 
-        if (optionalPlayer.isPresent()) {
-            Player player = optionalPlayer.get();
-            List<Transaction> transactionsList = transactionsService.findByPlayerId(player.getId());
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            Claims claims = jwtUtils.getPayload(token);
+            String username = (String) claims.get("username");
 
-            if (transactionsList.isEmpty()) {
-                System.out.println("У пользователя " + username + " нет истории транзакций.");
+            Optional<Player> optionalPlayer = playerService.findByUsername(username);
+
+            if (optionalPlayer.isPresent()) {
+                Player player = optionalPlayer.get();
+                List<Transaction> transactionsList = transactionsService.findByPlayerId(player.getId());
+
+                List<TransactionDto> transactionsDto = transactionsList.stream()
+                        .map(TransactionMapper.INSTANCE::toDTO)
+                        .collect(Collectors.toList());
+
+                response.put("username", username);
+                response.put("transactions", transactionsDto);
+                playerManager.audit(username, VIEW_TRANSACTION_HISTORY, SUCCESS);
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("error", "Unauthorized");
                 playerManager.audit(username, VIEW_TRANSACTION_HISTORY, FAIL);
-                return transactionsList;
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
-
-            System.out.println("Custom ID | Transaction Type  | Amount");
-            System.out.println("-----------------------------------");
-
-            for (Transaction transaction : transactionsList) {
-                System.out.printf("%-10s | %-16s | %.2f%n",
-                        transaction.getTransactionId(),
-                        transaction.getType(),
-                        transaction.getAmount());
-            }
-            playerManager.audit(username, VIEW_TRANSACTION_HISTORY, SUCCESS);
-            return transactionsList;
-        } else {
-            System.out.println("Пользователь с именем " + username + " не найден.");
-            playerManager.audit(username, VIEW_TRANSACTION_HISTORY, FAIL);
-            return null;
         }
+        response.put("error", "Unauthorized");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }
+

@@ -1,7 +1,6 @@
 package org.example.core.domain;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +18,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Player {
-
     /**
      * The unique identifier of the player.
      */
@@ -38,17 +36,10 @@ public class Player {
     /**
      * The current balance of the player, represented as a decimal value.
      */
-    @Builder.Default
     private BigDecimal balance = BigDecimal.ZERO;
 
-    public String toJson() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return "{}";
-        }
+    public Player(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
-
 }

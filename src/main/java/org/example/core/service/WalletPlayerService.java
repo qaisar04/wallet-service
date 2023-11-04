@@ -3,8 +3,15 @@ package org.example.core.service;
 
 import org.example.dao.impl.PlayerDaoImpl;
 import org.example.core.domain.Player;
-import java.util.*;
+import org.example.dto.PlayerDto;
+import org.example.manager.PlayerManager;
+import org.example.wrapper.PlayerWrapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Класс WalletPlayerService представляет собой сервис для управления взаимодействием с игроками.
@@ -13,11 +20,15 @@ import java.util.List;
  * - Аутентификация игроков.
  * - Проверка балансов игроков.
  */
-public class WalletPlayerService implements Service<Integer, Player>{
+@Service
+public class WalletPlayerService implements WalletService<Integer, Player> {
 
-    private final PlayerDaoImpl playerDaoImpl = PlayerDaoImpl.getInstance();
+    private PlayerDaoImpl playerDaoImpl;
 
-    private static WalletPlayerService playerService = new WalletPlayerService();
+    @Autowired
+    public WalletPlayerService(PlayerDaoImpl playerDaoImpl) {
+        this.playerDaoImpl = playerDaoImpl;
+    }
 
     @Override
     public Optional<Player> findById(Integer id) {
@@ -53,8 +64,5 @@ public class WalletPlayerService implements Service<Integer, Player>{
         return playerDaoImpl.deleteAll();
     }
 
-    public static WalletPlayerService getInstance(){
-        return playerService;
-    }
-
+    private WalletPlayerService() {}
 }

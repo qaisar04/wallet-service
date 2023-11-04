@@ -1,0 +1,8 @@
+db:
+  url: jdbc:postgresql://localhost:5432/wallet_service_db
+  username: qaisar
+  password: walletservice
+  driver: org.postgresql.Driver
+jwt:
+  token:
+    secret: cWFpc2FydmVyeWdvb2RDK2FyDA32wZXJz2KKFpcRDKKKb25JbG92ZVlvdQ==

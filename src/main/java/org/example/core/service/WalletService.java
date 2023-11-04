@@ -11,7 +11,7 @@ import java.util.Optional;
  * @param <T> The type of the unique identifier (e.g., Integer, Long) for the domain entity.
  * @param <V> The domain entity type that the service manages (e.g., Player, Transaction).
  */
-public interface Service<T, V> {
+public interface WalletService<T, V> {
 
     /**
      * Retrieves an entity by its unique identifier.
