@@ -1,10 +1,8 @@
-package org.example.util;
+package kz.baltabayev.audits.util;
 
-
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

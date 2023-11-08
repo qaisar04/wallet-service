@@ -1,23 +1,16 @@
 package org.example.controller;
 
-import io.jsonwebtoken.Claims;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.example.annotations.Loggable;
-import org.example.core.domain.Player;
-import org.example.core.service.WalletPlayerService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.example.dto.transaction.TransactionWithId;
 import org.example.dto.transaction.TransactionWithoutId;
-import org.example.exception.TransactionException;
-import org.example.manager.PlayerManager;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.example.logging.aop.annotations.LoggableInfo;
+import org.example.manager.PlayerManagerImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * The {@code DebitTransactionController} class is a Spring REST controller responsible for handling debit transaction
@@ -39,17 +32,14 @@ import java.util.Optional;
  *
  * Both endpoints are annotated with the `@Loggable` annotation for logging purposes.
  */
+@Tag(name = "API for debit transaction", description = "this API allows you to make a debit transaction")
+@LoggableInfo
 @RestController
-@Api(value = "API for debit transaction", description = "this API allows you to make a debit transaction")
+@RequiredArgsConstructor
 @RequestMapping(value = "/api/debit", produces = "application/json")
 public class DebitTransactionController {
 
-    private final PlayerManager playerManager;
-
-    @Autowired
-    public DebitTransactionController(PlayerManager playerManager) {
-        this.playerManager = playerManager;
-    }
+    private final PlayerManagerImpl playerManager;
 
     /**
      * Handles debit transactions with a transaction ID. Receives a debit transaction request and an authentication token,
@@ -59,8 +49,7 @@ public class DebitTransactionController {
      * @param token      An authentication token provided in the request header.
      * @return A ResponseEntity containing the result of the debit transaction, including an error message if the transaction fails.
      */
-    @Loggable
-    @ApiOperation(value = "post method for debet with transaction id", response = HashMap.class)
+    @Operation(summary = "Method for debit transaction using ID")
     @PostMapping("/id")
     public ResponseEntity<Map<String, String>> debitTransactionWithTransactionId(
             @RequestBody TransactionWithId transaction,
@@ -76,9 +65,8 @@ public class DebitTransactionController {
      * @param token      An authentication token provided in the request header.
      * @return A ResponseEntity containing the result of the debit transaction, including an error message if the transaction fails.
      */
-    @Loggable
-    @ApiOperation(value = "post method for debet without transaction id", response = HashMap.class)
-    @PostMapping("/")
+    @Operation(summary = "Method for debit transaction without using ID")
+    @PostMapping()
     public ResponseEntity<Map<String, String>> debitTransactionWithoutTransactionId(
             @RequestBody TransactionWithoutId transaction,
             @RequestHeader("Authorization") String token) {

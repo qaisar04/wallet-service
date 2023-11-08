@@ -2,6 +2,7 @@ package org.example.manager;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import lombok.RequiredArgsConstructor;
 import org.example.core.domain.Audit;
 import org.example.core.domain.Player;
 import org.example.core.domain.Transaction;
@@ -10,6 +11,7 @@ import org.example.core.service.WalletPlayerService;
 import org.example.core.service.WalletTransactionsService;
 import org.example.dto.AuditDto;
 import org.example.dto.TransactionDto;
+import org.example.logging.aop.annotations.LoggableTime;
 import org.example.mapper.AuditMapper;
 import org.example.mapper.TransactionMapper;
 import org.example.util.JwtUtils;
@@ -25,23 +27,16 @@ import static org.example.core.domain.types.ActionType.VIEW_TRANSACTION_HISTORY;
 import static org.example.core.domain.types.AuditType.*;
 
 @Component
+@LoggableTime
+@RequiredArgsConstructor
 public class TransactionManager {
 
-    private final PlayerManager playerManager;
+    private final PlayerManagerImpl playerManager;
     private final WalletPlayerService playerService;
     private final WalletTransactionsService transactionsService;
     private final WalletAuditService auditService;
-    private JwtUtils jwtUtils;
+    private final JwtUtils jwtUtils;
 
-
-    @Autowired
-    public TransactionManager(PlayerManager playerManager, WalletPlayerService playerService, WalletTransactionsService transactionsService, WalletAuditService auditService, JwtUtils jwtUtils) {
-        this.playerManager = playerManager;
-        this.playerService = playerService;
-        this.transactionsService = transactionsService;
-        this.auditService = auditService;
-        this.jwtUtils = jwtUtils;
-    }
 
     /**
      * The method looks at the audit of the players' actions.

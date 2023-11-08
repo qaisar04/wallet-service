@@ -1,8 +1,25 @@
-db:
-  url: jdbc:postgresql://localhost:5432/wallet_service_db
-  username: qaisar
-  password: walletservice
-  driver: org.postgresql.Driver
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/wallet_service_db
+    username: qaisar
+    password: walletservice
+    driver-class-name: org.postgresql.Driver
 jwt:
   token:
     secret: cWFpc2FydmVyeWdvb2RDK2FyDA32wZXJz2KKFpcRDKKKb25JbG92ZVlvdQ==
+springdoc:
+  api-docs:
+    enabled: true
+    path: /swagger-ui.html
+server:
+  port: 8088
+app:
+  common:
+    logging:
+      level: INFO
+      enabled: true
+    audit:
+      enabled: true
+      level: INFO
+
+# http://localhost:8080/swagger-ui/index.html

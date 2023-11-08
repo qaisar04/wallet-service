@@ -3,9 +3,6 @@ package org.example.core.service;
 
 import org.example.dao.impl.PlayerDaoImpl;
 import org.example.core.domain.Player;
-import org.example.dto.PlayerDto;
-import org.example.manager.PlayerManager;
-import org.example.wrapper.PlayerWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

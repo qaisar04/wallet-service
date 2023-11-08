@@ -6,25 +6,22 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import org.example.util.ConnectionManager;
-import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.annotation.PostConstruct;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
-/**
- * The `LiquibaseDemo` class is responsible for running Liquibase database migrations. It uses Liquibase to apply
- * changesets defined in a changelog file to the connected database.
- */
 @Component
-public class LiquibaseDemo {
+public class LiquibaseRun {
 
     private final ConnectionManager connectionManager;
 
-    public LiquibaseDemo(ConnectionManager connectionManager) {
+    @Autowired
+    public LiquibaseRun(ConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
     }
 
@@ -33,18 +30,8 @@ public class LiquibaseDemo {
         runMigrations();
     }
 
-    public static void main(String[] args) {
-        LiquibaseDemo liquibaseDemo = new LiquibaseDemo(new ConnectionManager());
-        liquibaseDemo.runMigrations();
-    }
-    /**
-     * A singleton instance of the `LiquibaseDemo` class.
-     */
     private static final String SQL_CREATE_SCHEMA = "CREATE SCHEMA IF NOT EXISTS migration";
 
-    /**
-     * Runs database migrations using Liquibase.
-     */
     public void runMigrations() {
         try {
             Connection connection = connectionManager.getConnection();
@@ -61,5 +48,4 @@ public class LiquibaseDemo {
             e.printStackTrace();
         }
     }
-
 }

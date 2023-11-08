@@ -1,20 +1,15 @@
 package org.example.controller;
 
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.example.annotations.Loggable;
-import org.example.manager.PlayerManager;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.example.logging.aop.annotations.LoggableInfo;
+import org.example.manager.PlayerManagerImpl;
 import org.example.wrapper.PlayerWrapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
 
 /**
  * The {@code AuthenticatePlayerController} class is a Spring REST controller responsible for handling player
@@ -34,17 +29,14 @@ import java.util.HashMap;
  * authentication is successful, it returns a ResponseEntity containing a JWT token. If an error occurs during the
  * authentication process, an error message is returned with an HTTP 500 status.
  */
+@Tag(name = "API for player authorization", description = "This API returns the JWT token in response, thereby ensuring the security of subsequent operations performed")
 @RestController
-@Api(value = "API for player authorization", description = "this API returns the JWT token in response, thereby ensuring the security of subsequent operations performed")
+@LoggableInfo
+@RequiredArgsConstructor
 @RequestMapping(value = "/auth", produces = "application/json")
 public class AuthenticatePlayerController {
 
-    private final PlayerManager playerManager;
-
-    @Autowired
-    public AuthenticatePlayerController(PlayerManager playerManager) {
-        this.playerManager = playerManager;
-    }
+    private final PlayerManagerImpl playerManager;
 
     /**
      * Handles player authentication by receiving player credentials and returning a JWT token in response.
@@ -52,8 +44,6 @@ public class AuthenticatePlayerController {
      * @param playerWrapper A {@code PlayerWrapper} object containing player credentials (username and password).
      * @return A ResponseEntity containing a JWT token if authentication is successful, or an error message with an HTTP 500 status if an error occurs.
      */
-    @Loggable
-    @ApiOperation(value = "post method for authenticate player", response = HashMap.class)
     @PostMapping
     public ResponseEntity<?> authenticatePlayer(@RequestBody PlayerWrapper playerWrapper) {
             return playerManager.authenticatePlayer(playerWrapper);

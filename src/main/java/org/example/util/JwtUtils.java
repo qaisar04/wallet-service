@@ -2,25 +2,17 @@ package org.example.util;
 
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
 import org.example.core.domain.Player;
 import org.example.сonfiguration.SecurityConfig;
-import org.example.сonfiguration.YamlPropertySourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 
-import javax.crypto.SecretKey;
-import java.security.Key;
-import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Base64;
 import java.util.Date;
 
 /**
@@ -37,7 +29,6 @@ import java.util.Date;
  *
  * The class is annotated with `@Component` for Spring component scanning.
  */
-@PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 @Component
 public class JwtUtils {
 

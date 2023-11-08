@@ -1,9 +1,10 @@
-package org.example.annotations;
+package org.example.logging.aop.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
 /**
  * The {@code Loggable} annotation is used to mark methods and classes that should be logged.
  * When applied to a class, it indicates that all methods within that class should be logged.
@@ -32,6 +33,6 @@ import java.lang.annotation.Target;
  * </pre>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.TYPE})
-public @interface Loggable {
+@Target({ElementType.TYPE})
+public @interface LoggableTime {
 }

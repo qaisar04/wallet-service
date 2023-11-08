@@ -1,6 +1,8 @@
 package org.example.manager;
 
 import io.jsonwebtoken.Claims;
+import kz.baltabayev.audits.manager.PlayerManager;
+import lombok.RequiredArgsConstructor;
 import org.example.core.domain.Audit;
 import org.example.core.domain.Player;
 import org.example.core.domain.Transaction;
@@ -11,9 +13,9 @@ import org.example.core.service.WalletPlayerService;
 import org.example.core.service.WalletTransactionsService;
 import org.example.dto.transaction.TransactionWithId;
 import org.example.dto.transaction.TransactionWithoutId;
+import org.example.logging.aop.annotations.LoggableTime;
 import org.example.util.JwtUtils;
 import org.example.wrapper.PlayerWrapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -49,27 +51,15 @@ import static org.example.core.domain.types.TransactionType.CREDIT;
  * The class is annotated with `@Component` for Spring component scanning.
  */
 @Component
-public class PlayerManager {
+@LoggableTime
+@RequiredArgsConstructor
+public class PlayerManagerImpl implements PlayerManager<Player, PlayerWrapper, TransactionWithId, TransactionWithoutId> {
 
-    private WalletPlayerService playerService;
-    private WalletTransactionsService transactionsService;
-    private WalletAuditService auditService;
-    private JwtUtils jwtUtils;
+    private final WalletPlayerService playerService;
+    private final WalletTransactionsService transactionsService;
+    private final WalletAuditService auditService;
+    private final JwtUtils jwtUtils;
 
-
-    @Autowired
-    public PlayerManager(WalletPlayerService playerService, WalletTransactionsService transactionsService, WalletAuditService auditService, JwtUtils jwtUtils) {
-        this.playerService = playerService;
-        this.transactionsService = transactionsService;
-        this.auditService = auditService;
-        this.jwtUtils = jwtUtils;
-    }
-
-    /**
-     * The constructor creates a new Wallet Service object
-     */
-    public PlayerManager() {
-    }
 
     /**
      * Registers a new player with the specified username and password.
