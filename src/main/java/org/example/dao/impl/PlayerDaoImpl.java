@@ -1,5 +1,7 @@
 package org.example.dao.impl;
 
+import kz.baltabayev.audits.manager.TransactionManager;
+import lombok.RequiredArgsConstructor;
 import org.example.dao.Dao;
 import org.example.core.domain.Player;
 import org.example.util.ConnectionManager;
@@ -14,7 +16,7 @@ import java.util.Optional;
 @Repository
 public class PlayerDaoImpl implements Dao<Integer, Player> {
 
-    private ConnectionManager connectionManager;
+    private final ConnectionManager connectionManager;
 
     @Autowired
     public PlayerDaoImpl(ConnectionManager connectionManager) {
@@ -180,15 +182,5 @@ public class PlayerDaoImpl implements Dao<Integer, Player> {
                 .password(resultSet.getString("password"))
                 .balance(resultSet.getBigDecimal("balance"))
                 .build();
-    }
-
-    // TODO: изменить получение обьекта в тестах
-    private static final PlayerDaoImpl playerDaoImpl = new PlayerDaoImpl();
-
-    public static PlayerDaoImpl getInstance() {
-        return playerDaoImpl;
-    }
-
-    private PlayerDaoImpl() {
     }
 }

@@ -8,6 +8,8 @@ import org.example.dao.impl.PlayerDaoImpl;
 import org.example.dao.impl.TransactionDaoImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SpringBootTest
 public class TransactionDaoImplTest extends ContainersEnvironment {
 
     private TransactionDaoImpl transactionDao;
@@ -23,11 +26,14 @@ public class TransactionDaoImplTest extends ContainersEnvironment {
     private Transaction testTransaction;
     private Player testPlayer;
 
+    @Autowired
+    public TransactionDaoImplTest(TransactionDaoImpl transactionDao, PlayerDaoImpl playerDao) {
+        this.transactionDao = transactionDao;
+        this.playerDao = playerDao;
+    }
+
     @BeforeEach
     public void setUp() {
-        transactionDao = TransactionDaoImpl.getInstance();
-        playerDao = PlayerDaoImpl.getInstance();
-
         transactionDao.deleteAll();
         playerDao.deleteAll();
 

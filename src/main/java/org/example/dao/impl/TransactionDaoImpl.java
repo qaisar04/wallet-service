@@ -1,5 +1,6 @@
 package org.example.dao.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.example.core.domain.types.TransactionType;
 import org.example.dao.Dao;
 import org.example.core.domain.Transaction;
@@ -18,8 +19,7 @@ import java.util.Optional;
 @Repository
 public class TransactionDaoImpl implements Dao<Integer, Transaction> {
 
-
-    private ConnectionManager connectionManager;
+    private final ConnectionManager connectionManager;
 
     @Autowired
     public TransactionDaoImpl(ConnectionManager connectionManager) {
@@ -237,14 +237,4 @@ public class TransactionDaoImpl implements Dao<Integer, Transaction> {
                 .playerId(resultSet.getInt("player_id"))
                 .build();
     }
-
-    // TODO: изменить получение обьекта в тестах
-    private static final TransactionDaoImpl transactionDaoImpl = new TransactionDaoImpl();
-
-    public static TransactionDaoImpl getInstance() {
-        return transactionDaoImpl;
-    }
-
-    private TransactionDaoImpl() { }
-
 }

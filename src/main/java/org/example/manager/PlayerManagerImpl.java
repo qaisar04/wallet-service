@@ -219,7 +219,6 @@ public class PlayerManagerImpl implements PlayerManager<Player, PlayerWrapper, T
     }
 
 
-
     /**
      * Performs a debit transaction for a player using a transaction ID, checking for authorization and validation.
      *

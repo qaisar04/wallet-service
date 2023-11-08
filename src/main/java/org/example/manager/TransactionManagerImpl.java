@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Component
 @LoggableTime
 @RequiredArgsConstructor
-public class TransactionManagerImpl implements TransactionManager<String,ResponseEntity<HashMap<String, Object>>> {
+public class TransactionManagerImpl implements TransactionManager<String, ResponseEntity<HashMap<String, Object>>> {
 
     private final WalletPlayerService playerService;
     private final WalletTransactionsService transactionsService;

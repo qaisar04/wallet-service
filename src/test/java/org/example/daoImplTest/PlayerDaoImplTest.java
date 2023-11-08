@@ -6,6 +6,9 @@ import org.example.dao.impl.PlayerDaoImpl;
 import org.example.dao.impl.TransactionDaoImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -15,18 +18,21 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@RunWith(SpringJUnit4ClassRunner.class)
 public class PlayerDaoImplTest extends ContainersEnvironment {
 
-    PlayerDaoImpl playerDao;
-    TransactionDaoImpl transactionDao;
+    private final PlayerDaoImpl playerDao;
+    private final TransactionDaoImpl transactionDao;
     private Player testPlayer;
 
+    @Autowired
+    public PlayerDaoImplTest(PlayerDaoImpl playerDao, TransactionDaoImpl transactionDao) {
+        this.playerDao = playerDao;
+        this.transactionDao = transactionDao;
+    }
 
     @BeforeEach
     public void setUp() {
-        playerDao = PlayerDaoImpl.getInstance();
-        transactionDao = TransactionDaoImpl.getInstance();
-
         transactionDao.deleteAll();
         playerDao.deleteAll();
         testPlayer = createSamplePlayer("TestPlayer", "password", BigDecimal.valueOf(100.0));

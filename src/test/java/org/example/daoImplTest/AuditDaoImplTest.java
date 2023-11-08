@@ -7,6 +7,11 @@ import org.example.core.domain.types.AuditType;
 import org.example.dao.impl.AuditDaoImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,13 +19,18 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SpringBootTest
 public class AuditDaoImplTest extends ContainersEnvironment {
 
     private AuditDaoImpl auditDao;
 
+    @Autowired
+    public AuditDaoImplTest(AuditDaoImpl auditDao) {
+        this.auditDao = auditDao;
+    }
+
     @BeforeEach
     public void setUp() {
-        auditDao = AuditDaoImpl.getInstance();
         auditDao.deleteAll();
         Audit audit1 = Audit.builder()
                 .playerFullName("Bob")
