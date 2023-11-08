@@ -16,24 +16,8 @@
 
 1. Склонируйте репозиторий на вашем компьютере.
 2. Откройте проект в IntelliJ IDEA.
-3. Запустите `Tomcat 9` 
+3. Запустите `ApplicationRunner` 
 
-## Зависимости
-
-- junit-jupiter
-- lombok
-- liquibase-core
-- postgresql
-- jackson-databind
-- spring
-- jjwt-api
-- javax.servlet-api
-- javax.annotation-api
-- aspectjrt
-- springfox
-- mapstruct
-- mockito
-- snakeyaml
 
 ## Связаться со мной:
 
