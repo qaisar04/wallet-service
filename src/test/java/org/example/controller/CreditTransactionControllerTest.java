@@ -43,45 +43,35 @@ public class CreditTransactionControllerTest {
 
     @Test
     public void testCreditTransactionWithTransactionId() {
-        // Create a sample TransactionWithId and token
         TransactionWithId transaction = new TransactionWithId(1, BigDecimal.valueOf(100.0));
         String token = "Bearer yourAuthTokenHere";
 
-        // Mock dependencies and behavior
         when(playerService.findByUsername(anyString()))
                 .thenReturn(Optional.of(new Player(/* create a Player object here */)));
         when(transactionsService.findById(1))
                 .thenReturn(Optional.empty());
 
-        // Mock the playerManager method to return a ResponseEntity
         Map<String, String> response = new HashMap<>();
         response.put("message", "Транзакция успешно завершена");
         when(playerManager.creditWithTransactionId(transaction, token))
                 .thenReturn(ResponseEntity.ok(response));
 
-        // Call the controller method
         ResponseEntity<Map<String, String>> result = controller.creditTransactionWithTransactionId(transaction, token);
 
-        // Verify the result
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals("Транзакция успешно завершена", result.getBody().get("message"));
     }
 
     @Test
     public void testCreditTransactionWithoutTransactionId() {
-        // Create a sample TransactionWithoutId and token
         TransactionWithoutId transactionWithoutId = new TransactionWithoutId(BigDecimal.valueOf(50.0));
         String token = "Bearer yourAuthTokenHere";
 
-        // Mock the behavior of the random number generation
         when(playerManager.creditWithoutTransactionId(any(), anyString()))
-                .thenCallRealMethod(); // Use the actual method implementation
+                .thenCallRealMethod();
 
-        // Call the controller method
         ResponseEntity<Map<String, String>> result = controller.creditTransactionWithoutTransactionId(transactionWithoutId, token);
 
-        // Verify the result
         assertNotNull(result);
-        // You can add more specific assertions here for your use case.
     }
 }
