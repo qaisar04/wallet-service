@@ -3,15 +3,16 @@ package kz.baltabayev.audits.service;
 import kz.baltabayev.audits.domain.Audit;
 import kz.baltabayev.audits.util.ConnectionManager;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
 
-@Service
+@RequiredArgsConstructor
 public class AuditService {
 
-    ConnectionManager connectionManager;
+    private final ConnectionManager connectionManager;
 
     public Audit save(Audit audit) {
         String sqlSave = """

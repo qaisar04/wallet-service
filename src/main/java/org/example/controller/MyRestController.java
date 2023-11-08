@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.core.domain.Player;
 import org.example.logging.aop.annotations.LoggableInfo;
 import org.example.manager.PlayerManagerImpl;
-import org.example.manager.TransactionManager;
+import org.example.manager.TransactionManagerImpl;
 import org.example.wrapper.PlayerWrapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +39,7 @@ import java.util.Map;
 @RequestMapping(value = "/api", produces = "application/json")
     public class MyRestController {
 
-    private final TransactionManager transactionManager;
+    private final TransactionManagerImpl transactionManager;
     private final PlayerManagerImpl playerManager;
 
     /**

@@ -1,6 +1,6 @@
 package org.example.controller;
 
-import org.example.manager.PlayerManager;
+import org.example.manager.PlayerManagerImpl;
 import org.example.wrapper.PlayerWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ public class AuthenticatePlayerControllerTest {
     private AuthenticatePlayerController authenticatePlayerController;
 
     @Mock
-    private PlayerManager playerManager;
+    private PlayerManagerImpl playerManager;
 
     @BeforeEach
     public void setUp() {

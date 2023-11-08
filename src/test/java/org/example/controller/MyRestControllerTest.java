@@ -3,8 +3,8 @@ package org.example.controller;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.example.core.domain.Player;
-import org.example.manager.PlayerManager;
-import org.example.manager.TransactionManager;
+import org.example.manager.PlayerManagerImpl;
+import org.example.manager.TransactionManagerImpl;
 import org.example.wrapper.PlayerWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,10 +25,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 public class MyRestControllerTest {
 
     @Mock
-    private TransactionManager transactionManager;
+    private TransactionManagerImpl transactionManager;
 
     @Mock
-    private PlayerManager playerManager;
+    private PlayerManagerImpl playerManager;
 
     @InjectMocks
     private MyRestController myRestController;

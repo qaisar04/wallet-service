@@ -1,11 +1,10 @@
 package org.example.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.example.controller.CreditTransactionController;
-import org.example.manager.PlayerManager;
 import org.example.dto.transaction.TransactionWithId;
 import org.example.dto.transaction.TransactionWithoutId;
 import org.example.exception.TransactionException;
+import org.example.manager.PlayerManagerImpl;
 import org.example.wrapper.PlayerWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,12 +22,12 @@ import static org.mockito.Mockito.*;
 public class CreditTransactionControllerTest {
 
     private CreditTransactionController creditTransactionController;
-    private PlayerManager playerManager;
+    private PlayerManagerImpl playerManager;
     private ObjectMapper objectMapper;
 
     @BeforeEach
     public void setUp() {
-        playerManager = mock(PlayerManager.class);
+        playerManager = mock(PlayerManagerImpl.class);
         objectMapper = new ObjectMapper();
         creditTransactionController = new CreditTransactionController(playerManager);
     }

@@ -5,7 +5,7 @@ import org.example.controller.DebitTransactionController;
 import org.example.dto.transaction.TransactionWithId;
 import org.example.dto.transaction.TransactionWithoutId;
 import org.example.exception.TransactionException;
-import org.example.manager.PlayerManager;
+import org.example.manager.PlayerManagerImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,12 +26,12 @@ import static org.mockito.Mockito.when;
 public class DebitTransactionControllerTest {
 
     private DebitTransactionController debitTransactionController;
-    private PlayerManager playerManager;
+    private PlayerManagerImpl playerManager;
     private ObjectMapper objectMapper;
 
     @BeforeEach
     public void setUp() {
-        playerManager = mock(PlayerManager.class);
+        playerManager = mock(PlayerManagerImpl.class);
         debitTransactionController = new DebitTransactionController(playerManager);
         objectMapper = new ObjectMapper();
     }

@@ -11,7 +11,6 @@ import java.sql.SQLException;
 /**
  * Utility class for managing database connections using JDBC.
  */
-@Component
 public class ConnectionManager {
 
     /**
