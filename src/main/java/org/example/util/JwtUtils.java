@@ -32,7 +32,7 @@ import java.util.Date;
 @Component
 public class JwtUtils {
 
-    private SecurityConfig securityConfig;
+    private final SecurityConfig securityConfig;
 
     @Autowired
     public JwtUtils(SecurityConfig securityConfig) {

@@ -4,9 +4,9 @@ import jakarta.annotation.PostConstruct;
 import kz.baltabayev.audits.aspects.AuditAspect;
 import kz.baltabayev.audits.service.AuditService;
 import kz.baltabayev.audits.util.ConnectionManager;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,8 +29,7 @@ public class AuditsAutoConfiguration {
         logger.info("AuditsAutoConfiguration initialized");
     }
 
-
-    @Bean
+    @Bean(name = "connectionManagerBean")
     @Order(1)
     @ConditionalOnClass(ConnectionManager.class)
     public ConnectionManager connectionManager() {
@@ -38,20 +37,19 @@ public class AuditsAutoConfiguration {
         return new ConnectionManager();
     }
 
-    @Bean
+    @Bean(name = "auditServiceBean")
     @Order(2)
     @ConditionalOnClass(AuditService.class)
-    public AuditService auditService() {
+    public AuditService auditService(@Qualifier("connectionManagerBean") ConnectionManager connectionManager) {
         logger.info("AuditService bean start to create.");
-        return new AuditService(connectionManager());
+        return new AuditService(connectionManager);
     }
 
-    @Bean
+    @Bean(name = "auditAspectBean")
     @Order(3)
     @ConditionalOnClass(AuditAspect.class)
-    public AuditAspect auditAspect() {
+    public AuditAspect auditAspect(@Qualifier("auditServiceBean") AuditService auditService) {
         logger.info("AuditAspect bean start to create.");
-        return new AuditAspect(auditService());
+        return new AuditAspect(auditService);
     }
-
 }
