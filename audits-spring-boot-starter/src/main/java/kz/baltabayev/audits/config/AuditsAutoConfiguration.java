@@ -5,10 +5,8 @@ import kz.baltabayev.audits.aspects.AuditAspect;
 import kz.baltabayev.audits.service.AuditService;
 import kz.baltabayev.audits.util.ConnectionManager;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -17,12 +15,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.annotation.Order;
 
-@Configuration
 @EnableConfigurationProperties(AuditProperties.class)
 @ConditionalOnClass(AuditProperties.class)
-@RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "app.common.audits", name = "enabled", havingValue = "true")
 @EnableAspectJAutoProxy
+@Configuration
 public class AuditsAutoConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(AuditsAutoConfiguration.class);

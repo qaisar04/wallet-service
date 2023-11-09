@@ -21,5 +21,3 @@ app:
     audit:
       enabled: true
       level: INFO
-
-# http://localhost:8080/swagger-ui/index.html
