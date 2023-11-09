@@ -1,40 +1,38 @@
 package org.example.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.example.controller.DebitTransactionController;
 import org.example.dto.transaction.TransactionWithId;
 import org.example.dto.transaction.TransactionWithoutId;
 import org.example.exception.TransactionException;
-import org.example.manager.PlayerManager;
+import org.example.manager.PlayerManagerImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.web.util.NestedServletException;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest
+@AutoConfigureMockMvc
 public class DebitTransactionControllerTest {
 
-    private DebitTransactionController debitTransactionController;
-    private PlayerManager playerManager;
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
-    @BeforeEach
-    public void setUp() {
-        playerManager = mock(PlayerManager.class);
-        debitTransactionController = new DebitTransactionController(playerManager);
-        objectMapper = new ObjectMapper();
-    }
+    @MockBean
+    private PlayerManagerImpl playerManager;
 
     @Test
     public void testDebitTransactionWithTransactionId_Failure() throws Exception {
@@ -43,13 +41,12 @@ public class DebitTransactionControllerTest {
 
         when(playerManager.debitWithTransactionId(transaction, token)).thenThrow(new TransactionException("Transaction failed"));
 
-        String requestBody = objectMapper.writeValueAsString(transaction);
-        ResponseEntity<Map<String, String>> response = debitTransactionController.debitTransactionWithTransactionId(transaction, token);
-
-        verify(playerManager, times(1)).debitWithTransactionId(transaction, token);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Transaction failed", response.getBody().get("error"));
+        mockMvc.perform(MockMvcRequestBuilders.post("/your-api-endpoint-here")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(transaction))
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("Transaction failed"));
     }
 
     @Test
@@ -59,13 +56,11 @@ public class DebitTransactionControllerTest {
 
         when(playerManager.debitWithoutTransactionId(transaction, token)).thenThrow(new TransactionException("Transaction failed"));
 
-        String requestBody = objectMapper.writeValueAsString(transaction);
-        ResponseEntity<Map<String, String>> response = debitTransactionController.debitTransactionWithoutTransactionId(transaction, token);
-
-        verify(playerManager, times(1)).debitWithoutTransactionId(transaction, token);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Transaction failed", response.getBody().get("error"));
+        mockMvc.perform(MockMvcRequestBuilders.post("/your-api-endpoint-here")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(transaction))
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("Transaction failed"));
     }
 }
-

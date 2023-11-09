@@ -1,45 +1,38 @@
 package org.example.controller;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import org.example.core.domain.Player;
-import org.example.manager.PlayerManager;
-import org.example.manager.TransactionManager;
+import org.example.manager.PlayerManagerImpl;
+import org.example.manager.TransactionManagerImpl;
 import org.example.wrapper.PlayerWrapper;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.jar.JarEntry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
+@SpringBootTest
 public class MyRestControllerTest {
 
-    @Mock
-    private TransactionManager transactionManager;
-
-    @Mock
-    private PlayerManager playerManager;
-
-    @InjectMocks
+    @Autowired
     private MyRestController myRestController;
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
+    @MockBean
+    private TransactionManagerImpl transactionManager;
 
-    @Test
-    public void testRegisterPlayer() {
+    @MockBean
+    private PlayerManagerImpl playerManager;
+
+    @Before
+    public void setUp() {
         Player player = new Player();
         player.setId(756576);
         player.setUsername("testuser");
@@ -48,51 +41,54 @@ public class MyRestControllerTest {
         playerWrapper.setUsername("testuser");
         playerWrapper.setPassword("password");
 
-        Mockito.when(playerManager.registerPlayer(playerWrapper)).thenReturn(ResponseEntity.ok(player));
+        when(playerManager.registerPlayer(playerWrapper)).thenReturn(ResponseEntity.ok(player));
+
+        String token = "test-token";
+        HashMap<String, Object> transactionHistory = new HashMap<>();
+        transactionHistory.put("transactions", "transaction data");
+        when(transactionManager.viewTransactionHistory(token)).thenReturn(ResponseEntity.ok(transactionHistory));
+
+        HashMap<String, Object> auditHistory = new HashMap<>();
+        auditHistory.put("audits", "audit data");
+        when(transactionManager.viewAllAudits(token)).thenReturn(ResponseEntity.ok(auditHistory));
+
+        when(playerManager.getBalance(token)).thenReturn(getBalanceResponse());
+    }
+
+    @Test
+    public void testRegisterPlayer() {
+        PlayerWrapper playerWrapper = new PlayerWrapper();
+        playerWrapper.setUsername("testuser");
+        playerWrapper.setPassword("password");
 
         ResponseEntity<Player> response = myRestController.registerPlayer(playerWrapper);
 
-        assert response.getStatusCodeValue() == 200;
-        assert response.getBody() != null;
-        assert response.getBody().getId() == 756576;
-        assert response.getBody().getUsername().equals("testuser");
+        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
+        assertEquals(756576, response.getBody().getId());
+        assertEquals("testuser", response.getBody().getUsername());
     }
 
     @Test
     public void testViewTransactionHistory() {
         String token = "test-token";
-        HashMap<String, Object> transactionHistory = new HashMap<>();
-        transactionHistory.put("transactions", "transaction data");
-
-        Mockito.when(transactionManager.viewTransactionHistory(token)).thenReturn(ResponseEntity.ok(transactionHistory));
-
         ResponseEntity<HashMap<String, Object>> response = myRestController.viewTransactionHistory(token);
 
-        assert response.getStatusCodeValue() == 200;
-        assert response.getBody() != null;
-        assert response.getBody().get("transactions").equals("transaction data");
+        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
+        assertEquals("transaction data", response.getBody().get("transactions"));
     }
 
     @Test
     public void testViewAuditHistory() {
         String token = "test-token";
-        HashMap<String, Object> auditHistory = new HashMap<>();
-        auditHistory.put("audits", "audit data");
-
-        Mockito.when(transactionManager.viewAllAudits(token)).thenReturn(ResponseEntity.ok(auditHistory));
-
         ResponseEntity<HashMap<String, Object>> response = myRestController.viewAuditHistory(token);
 
-        assert response.getStatusCodeValue() == 200;
-        assert response.getBody() != null;
-        assert response.getBody().get("audits").equals("audit data");
+        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
+        assertEquals("audit data", response.getBody().get("audits"));
     }
 
     @Test
     public void testGetBalance() {
         String token = "Bearer test-token";
-
-        Mockito.when(playerManager.getBalance(token)).thenReturn(getBalanceResponse());
 
         ResponseEntity<Map<String, String>> response = myRestController.viewPlayerBalance(token);
 
@@ -106,4 +102,3 @@ public class MyRestControllerTest {
         return ResponseEntity.ok(response);
     }
 }
-

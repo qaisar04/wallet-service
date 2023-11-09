@@ -20,42 +20,35 @@ public class WalletAuditService implements WalletService<Integer, Audit> {
     }
 
     @Override
-    @Transactional
     public Optional<Audit> findById(Integer id) {
         return auditDaoImpl.findById(id);
     }
 
     @Override
-    @Transactional
     public List<Audit> findAll() {
          return auditDaoImpl.findAll();
     }
 
-    @Transactional
     public Optional<Audit> findByUsername(String username) {
         return auditDaoImpl.findByUsername(username);
     }
 
     @Override
-    @Transactional
     public void save(Audit audit) {
          auditDaoImpl.save(audit);
     }
 
     @Override
-    @Transactional
     public void update(Audit audit) {
         auditDaoImpl.update(audit);
     }
 
     @Override
-    @Transactional
     public boolean delete(Integer id) {
         return auditDaoImpl.delete(id);
     }
 
     @Override
-    @Transactional
     public boolean deleteAll() {
         return auditDaoImpl.deleteAll();
     }

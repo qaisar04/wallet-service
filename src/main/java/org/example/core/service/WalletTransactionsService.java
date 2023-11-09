@@ -23,43 +23,36 @@ public class WalletTransactionsService implements WalletService<Integer, Transac
         this.transactionDaoImpl = transactionDaoImpl;
     }
 
-    @Transactional
     public List<Transaction> findByPlayerId(Integer id) {
         return transactionDaoImpl.findByPlayerId(id);
     }
 
     @Override
-    @Transactional
     public Optional<Transaction> findById(Integer id) {
         return transactionDaoImpl.findById(id);
     }
 
     @Override
-    @Transactional
     public List<Transaction> findAll() {
         return transactionDaoImpl.findAll();
     }
 
     @Override
-    @Transactional
     public void save(Transaction transaction) {
         transactionDaoImpl.save(transaction);
     }
 
     @Override
-    @Transactional
     public void update(Transaction transaction) {
         transactionDaoImpl.update(transaction);
     }
 
     @Override
-    @Transactional
     public boolean delete(Integer id) {
         return transactionDaoImpl.delete(id);
     }
 
     @Override
-    @Transactional
     public boolean deleteAll() {
         return transactionDaoImpl.deleteAll();
     }

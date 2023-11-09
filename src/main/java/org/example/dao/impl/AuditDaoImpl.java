@@ -19,8 +19,7 @@ import java.util.Optional;
 @Repository
 public class AuditDaoImpl implements Dao<Integer, Audit> {
 
-
-    private ConnectionManager connectionManager;
+    private final ConnectionManager connectionManager;
 
     @Autowired
     public AuditDaoImpl(ConnectionManager connectionManager) {
@@ -116,9 +115,9 @@ public class AuditDaoImpl implements Dao<Integer, Audit> {
     @Override
     public Audit save(Audit audit) {
         String sqlSave = """
-            INSERT INTO wallet.audits(player_username, audit_type, action_type)
-            VALUES (?,?,?);
-            """;
+                INSERT INTO wallet.audits(player_username, audit_type, action_type)
+                VALUES (?,?,?);
+                """;
 
         try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlSave, Statement.RETURN_GENERATED_KEYS)) {
@@ -147,7 +146,6 @@ public class AuditDaoImpl implements Dao<Integer, Audit> {
         }
         return null;
     }
-
 
 
     /**
@@ -236,16 +234,6 @@ public class AuditDaoImpl implements Dao<Integer, Audit> {
                 .playerFullName(resultSet.getString("player_username"))
                 .build();
     }
-
-    // TODO: изменить получение обьекта в тестах
-    private static final AuditDaoImpl auditDaoImpl = new AuditDaoImpl();
-
-    public static AuditDaoImpl getInstance() {
-        return auditDaoImpl;
-    }
-
-    private AuditDaoImpl() {}
-
 }
 
 

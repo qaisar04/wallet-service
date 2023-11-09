@@ -1,11 +1,13 @@
-package org.example.aspects;
+package org.example.logging.aop.aspects;
 
-import lombok.extern.log4j.Log4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * The {@code LoggingMethodExecutionAspect} class is an AspectJ aspect responsible for logging method executions
@@ -23,31 +25,34 @@ import org.springframework.stereotype.Component;
  *
  * // Any methods in the 'org.example.manager' package will be automatically logged.
  * </pre>
- *
+ * <p>
  * When methods within the `org.example.manager` package are invoked, this aspect will log information about their execution.
  * The aspect can be enabled or disabled globally by enabling or disabling component scanning of the package
  * where this aspect is defined.
  */
 @Aspect
-@Log4j
-@Component
 public class LoggingMethodExecutionAspect {
 
-    @Around("execution(* org.example.manager..*.*(..))")
+    private static final Logger logger = LoggerFactory.getLogger(LoggingMethodExecutionAspect.class);
+
+
+    @Pointcut("within(@org.example.logging.aop.annotations.LoggableInfo *) && execution(* *(..))")
+    public void annotatedByLoggable() {
+    }
+
+    @Around("annotatedByLoggable()")
     public Object logMethodExecution(ProceedingJoinPoint pjp) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
         String methodName = methodSignature.getName();
         String className = methodSignature.getDeclaringType().getSimpleName();
 
-        log.info("__ __ __ __ __ __ __ __ __ __ __");
-        log.info("Executing method " + methodName + " in class " + className);
+        logger.info("Executing method " + methodName + " in class " + className);
 
         long startTime = System.currentTimeMillis();
         Object result = pjp.proceed();
         long endTime = System.currentTimeMillis();
 
-        log.info("Method " + methodName + " in class " + className + " completed in " + (endTime - startTime) + " ms.");
-        log.info("__ __ __ __ __ __ __ __ __ __ __");
+        logger.info("Method " + methodName + " in class " + className + " completed in " + (endTime - startTime) + " ms.");
 
         return result;
     }

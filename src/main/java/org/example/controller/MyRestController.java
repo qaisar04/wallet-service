@@ -1,17 +1,16 @@
 package org.example.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.example.annotations.Loggable;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.example.core.domain.Player;
-import org.example.manager.PlayerManager;
-import org.example.manager.TransactionManager;
+import org.example.logging.aop.annotations.LoggableInfo;
+import org.example.manager.PlayerManagerImpl;
+import org.example.manager.TransactionManagerImpl;
 import org.example.wrapper.PlayerWrapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,19 +32,15 @@ import java.util.Map;
  *
  * The controller is annotated with `@Loggable` for logging purposes and includes Swagger annotations for API documentation.
  */
+@Tag(name = "Base functional API", description = "API for player registration, getting transaction history and all audits")
 @RestController
-@Api(value = "Base functional API", description = "API for player registration, getting transaction history and all audits")
+@LoggableInfo
+@RequiredArgsConstructor
 @RequestMapping(value = "/api", produces = "application/json")
     public class MyRestController {
 
-    private final TransactionManager transactionManager;
-    private final PlayerManager playerManager;
-
-    @Autowired
-    public MyRestController(TransactionManager transactionManager, PlayerManager playerManager) {
-        this.transactionManager = transactionManager;
-        this.playerManager = playerManager;
-    }
+    private final TransactionManagerImpl transactionManager;
+    private final PlayerManagerImpl playerManager;
 
     /**
      * Handles player registration by receiving player details and returning a response containing the registered player.
@@ -53,8 +48,7 @@ import java.util.Map;
      * @param playerWrapper A {@code PlayerWrapper} object containing player registration details.
      * @return A ResponseEntity containing the registered player.
      */
-    @Loggable
-    @ApiOperation(value = "post method for register", response = Player.class)
+    @Operation(summary = "Method for user registration")
     @PostMapping("/register")
     public ResponseEntity<Player> registerPlayer(@RequestBody PlayerWrapper playerWrapper) {
         return playerManager.registerPlayer(playerWrapper);
@@ -66,8 +60,7 @@ import java.util.Map;
      * @param token An authentication token provided in the request header.
      * @return A ResponseEntity containing the player's balance.
      */
-    @Loggable
-    @ApiOperation(value = "post method for viewing player balance, works only after authorization", response = BigDecimal.class)
+    @Operation(summary = "Method for viewing the balance")
     @GetMapping("/balance")
     public ResponseEntity<Map<String, String>> viewPlayerBalance(
             @RequestHeader("Authorization") String token) {
@@ -81,8 +74,7 @@ import java.util.Map;
      * @param token An authentication token provided in the request header.
      * @return A ResponseEntity containing the transaction history of the player.
      */
-    @Loggable
-    @ApiOperation(value = "post method for viewing all transactions for a certain player, works only after authorization", response = HashMap.class)
+    @Operation(summary = "Method for viewing transaction history")
     @GetMapping("/history")
     public ResponseEntity<HashMap<String, Object>> viewTransactionHistory(
             @RequestHeader("Authorization") String token) {
@@ -95,8 +87,7 @@ import java.util.Map;
      * @param token An authentication token provided in the request header.
      * @return A ResponseEntity containing the audit history.
      */
-    @Loggable
-    @ApiOperation(value = "post method for viewing all audits, works only after administrator authorization", response = HashMap.class)
+    @Operation(summary = "Method for viewing audit history")
     @GetMapping("/audits")
     public ResponseEntity<HashMap<String, Object>> viewAuditHistory(
             @RequestHeader("Authorization") String token) {

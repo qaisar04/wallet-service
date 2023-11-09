@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.core.domain.types.ActionType;
 import org.example.core.domain.types.AuditType;
-import org.springframework.stereotype.Component;
 
 
 @Getter
