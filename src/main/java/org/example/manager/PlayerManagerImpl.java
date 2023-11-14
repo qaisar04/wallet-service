@@ -180,7 +180,6 @@ public class PlayerManagerImpl implements PlayerManager<Player, PlayerWrapper, T
         String username = getUsernameFromToken(token);
 
         if (token != null && username != null) {
-            token = token.substring(7);
 
             if (transaction.id() <= 0 || transaction.amount().compareTo(BigDecimal.ZERO) <= 0) {
                 response.put("error", "Неверные детали транзакции");

@@ -1,11 +1,10 @@
 package org.example.core.service;
 
 
-import org.example.dao.impl.PlayerDaoImpl;
 import org.example.core.domain.Player;
+import org.example.dao.impl.PlayerDaoImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;

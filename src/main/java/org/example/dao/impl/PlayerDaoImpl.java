@@ -1,7 +1,5 @@
 package org.example.dao.impl;
 
-import kz.baltabayev.audits.manager.TransactionManager;
-import lombok.RequiredArgsConstructor;
 import org.example.dao.Dao;
 import org.example.core.domain.Player;
 import org.example.util.ConnectionManager;

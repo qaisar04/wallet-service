@@ -1,5 +1,6 @@
 package org.example.dao.impl;
 
+import jakarta.persistence.EntityManager;
 import org.example.core.domain.Audit;
 import org.example.core.domain.types.ActionType;
 import org.example.core.domain.types.AuditType;
@@ -8,6 +9,7 @@ import org.example.util.ConnectionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.management.Query;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +21,8 @@ import java.util.Optional;
 @Repository
 public class AuditDaoImpl implements Dao<Integer, Audit> {
 
-    private final ConnectionManager connectionManager;
-
     @Autowired
-    public AuditDaoImpl(ConnectionManager connectionManager) {
-        this.connectionManager = connectionManager;
-    }
+    private ConnectionManager connectionManager;
 
     /**
      * Find an audit record by its identifier.

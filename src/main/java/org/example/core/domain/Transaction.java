@@ -1,5 +1,7 @@
 package org.example.core.domain;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,27 +16,37 @@ import java.math.BigDecimal;
  */
 @Data
 @Builder
+@Entity
+@Table(name = "transactions")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Transaction {
     /**
      * The unique identifier of the transaction.
      */
+    @Id
+    @SequenceGenerator(name = "transaction_generator", sequenceName = "transaction_id_seq", allocationSize = 1, schema = "develop")
+    @GeneratedValue(generator = "transaction_generator", strategy = GenerationType.SEQUENCE)
+    @Column(name = "transaction_id")
     private Integer transactionId;
 
     /**
      * The type of the transaction (e.g., credit or debit).
      */
+    @NotNull
+    @Column(name = "type")
     private TransactionType type;
 
     /**
      * The monetary amount associated with the transaction.
      */
+    @Column(name = "amount")
     private BigDecimal amount;
 
     /**
      * The unique identifier of the player involved in the transaction.
      */
+    @Column(name = "player_id")
     private Integer playerId;
 
     public static Transaction createTransaction(Integer transactionId, TransactionType type, BigDecimal amount, Integer playerId) {

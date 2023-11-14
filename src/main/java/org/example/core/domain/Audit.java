@@ -1,5 +1,6 @@
 package org.example.core.domain;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,26 +15,34 @@ import org.example.core.domain.types.AuditType;
  */
 @Data
 @Builder
+@Entity
+@Table(name = "audits")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Audit {
     /**
      * The unique identifier of the audit record.
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
     /**
      * The type of audit, such as success or failure.
      */
+    @Column(name = "audit_type")
     private AuditType auditType;
 
     /**
      * The type of action that was audited.
      */
+    @Column(name = "action_type")
     private ActionType actionType;
 
     /**
      * The full name of the player associated with the audit.
      */
+    @Column(name = "player_username")
     private String playerFullName;
 }

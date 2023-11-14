@@ -1,6 +1,5 @@
 package org.example.dao.impl;
 
-import lombok.RequiredArgsConstructor;
 import org.example.core.domain.types.TransactionType;
 import org.example.dao.Dao;
 import org.example.core.domain.Transaction;

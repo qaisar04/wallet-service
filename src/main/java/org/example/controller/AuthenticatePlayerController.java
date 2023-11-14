@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 /**
  * The {@code AuthenticatePlayerController} class is a Spring REST controller responsible for handling player
  * authentication requests. It provides an endpoint for authenticating players and returning a JWT token as a response.
@@ -45,7 +47,7 @@ public class AuthenticatePlayerController {
      * @return A ResponseEntity containing a JWT token if authentication is successful, or an error message with an HTTP 500 status if an error occurs.
      */
     @PostMapping
-    public ResponseEntity<?> authenticatePlayer(@RequestBody PlayerWrapper playerWrapper) {
+    public ResponseEntity<Map<String, String>> authenticatePlayer(@RequestBody PlayerWrapper playerWrapper) {
             return playerManager.authenticatePlayer(playerWrapper);
     }
 }
