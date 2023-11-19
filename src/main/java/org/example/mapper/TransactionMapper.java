@@ -2,24 +2,25 @@ package org.example.mapper;
 
 import org.example.core.domain.Player;
 import org.example.core.domain.Transaction;
-import org.example.dto.PlayerDto;
-import org.example.dto.TransactionDto;
+import org.example.dto.PlayerDTO;
+import org.example.dto.TransactionResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(
-        componentModel = MappingConstants.ComponentModel.SPRING,
-        unmappedTargetPolicy = ReportingPolicy.IGNORE
-)
-public interface TransactionMapper {
-    TransactionMapper INSTANCE = Mappers.getMapper(TransactionMapper.class);
+import java.util.List;
 
-    @Mapping(source = "transactionId", target = "transactionId")
-    @Mapping(source = "type", target = "type")
-    @Mapping(source = "amount", target = "amount")
-    TransactionDto toDTO(Transaction transaction);
+@Mapper(componentModel = "spring")
+public interface TransactionMapper {
+
+    /**
+     * Mapping transactions list entity to dto list
+     *
+     * @param entities the transactions entities
+     * @return mapped transaction dto list
+     */
+    List<TransactionResponse> toDTOList(List<Transaction> entities);
 }
 

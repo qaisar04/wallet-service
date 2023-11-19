@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.core.domain.types.PlayerRole;
 
 import java.math.BigDecimal;
 
@@ -18,7 +19,7 @@ import java.math.BigDecimal;
 @Data
 @Builder
 @Entity
-@Table(name = "players")
+@Table(name = "players", schema = "wallet")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Player {
@@ -26,9 +27,9 @@ public class Player {
      * The unique identifier of the player.
      */
     @Id
-    @GeneratedValue(generator = "player_generator", strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     /**
      * The username of the player.
@@ -43,6 +44,10 @@ public class Player {
     @NotNull
     @Column(name = "password")
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private PlayerRole playerRole;
 
     /**
      * The current balance of the player, represented as a decimal value.

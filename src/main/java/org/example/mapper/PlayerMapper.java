@@ -1,23 +1,19 @@
 package org.example.mapper;
 
 import org.example.core.domain.Player;
-import org.example.dto.PlayerDto;
+import org.example.dto.PlayerDTO;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.ReportingPolicy;
-import org.mapstruct.factory.Mappers;
 
-@Mapper(
-        componentModel = MappingConstants.ComponentModel.SPRING,
-        unmappedTargetPolicy = ReportingPolicy.IGNORE
-)
+@Mapper(componentModel = "spring")
 public interface PlayerMapper {
-    PlayerMapper INSTANCE = Mappers.getMapper(PlayerMapper.class);
 
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "username", target = "username")
-    @Mapping(source = "balance", target = "balance")
-    PlayerDto toDTO(Player player);
+    /**
+     * Mapping player entity to dto
+     *
+     * @param entity the player entity
+     * @return mapped player dto
+     */
+    PlayerDTO toDto(Player entity);
+
 }
 

@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.core.domain.types.TransactionType;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 /**
  * The `Transaction` class represents a financial transaction within the system.
@@ -17,7 +18,7 @@ import java.math.BigDecimal;
 @Data
 @Builder
 @Entity
-@Table(name = "transactions")
+@Table(name = "transactions", schema = "wallet")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Transaction {
@@ -25,16 +26,16 @@ public class Transaction {
      * The unique identifier of the transaction.
      */
     @Id
-    @SequenceGenerator(name = "transaction_generator", sequenceName = "transaction_id_seq", allocationSize = 1, schema = "develop")
-    @GeneratedValue(generator = "transaction_generator", strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "transaction_id")
-    private Integer transactionId;
+    private UUID transactionId;
 
     /**
      * The type of the transaction (e.g., credit or debit).
      */
     @NotNull
     @Column(name = "type")
+    @Enumerated(EnumType.STRING)
     private TransactionType type;
 
     /**
@@ -43,19 +44,16 @@ public class Transaction {
     @Column(name = "amount")
     private BigDecimal amount;
 
+    @Column(name = "balance_before")
+    private BigDecimal balanceBefore;
+
+    @Column(name = "balance_after")
+    private BigDecimal balanceAfter;
+
     /**
      * The unique identifier of the player involved in the transaction.
      */
     @Column(name = "player_id")
-    private Integer playerId;
-
-    public static Transaction createTransaction(Integer transactionId, TransactionType type, BigDecimal amount, Integer playerId) {
-        return Transaction.builder()
-                .transactionId(transactionId)
-                .type(type)
-                .amount(amount)
-                .playerId(playerId)
-                .build();
-    }
+    private Long playerId;
 }
 

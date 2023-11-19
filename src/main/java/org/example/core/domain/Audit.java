@@ -16,28 +16,31 @@ import org.example.core.domain.types.AuditType;
 @Data
 @Builder
 @Entity
-@Table(name = "audits")
+@Table(name = "audits", schema = "wallet")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Audit {
+
     /**
      * The unique identifier of the audit record.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     /**
      * The type of audit, such as success or failure.
      */
     @Column(name = "audit_type")
+    @Enumerated(EnumType.STRING)
     private AuditType auditType;
 
     /**
      * The type of action that was audited.
      */
     @Column(name = "action_type")
+    @Enumerated(EnumType.STRING)
     private ActionType actionType;
 
     /**

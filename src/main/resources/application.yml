@@ -4,6 +4,16 @@ spring:
     username: qaisar
     password: walletservice
     driver-class-name: org.postgresql.Driver
+
+  liquibase:
+    enabled: false
+    change-log: classpath:"db/changelog/changelog.xml
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
 jwt:
   token:
     secret: cWFpc2FydmVyeWdvb2RDK2FyDA32wZXJz2KKFpcRDKKKb25JbG92ZVlvdQ==
@@ -13,11 +23,16 @@ springdoc:
     path: /swagger-ui.html
 server:
   port: 8088
-app:
-  common:
-    logging:
-      level: INFO
-      enabled: true
-    audits:
-      enabled: true
-      level: INFO
+#app:
+#  common:
+#    logging:
+#      level: INFO
+#      enabled: true
+#    audits:
+#      enabled: true
+#      level: INFO
+
+#  http://localhost:8088/swagger-ui/index.html
+logging:
+  level:
+    root: INFO
