@@ -11,6 +11,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     List<Transaction> findAllByPlayerId(Long playerId);
 
-    Optional<Transaction> findByTransactionId(UUID transactionIdentifier);
+    Optional<Transaction> findByTransactionIdentifier(UUID transactionIdentifier);
 
 }

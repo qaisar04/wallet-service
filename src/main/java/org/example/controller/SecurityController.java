@@ -36,7 +36,6 @@ import java.util.Map;
  */
 @Tag(name = "API for player authorization", description = "This API returns the JWT token in response, thereby ensuring the security of subsequent operations performed")
 @RestController
-@LoggableInfo
 @RequiredArgsConstructor
 @RequestMapping(value = "/auth", produces = "application/json")
 public class SecurityController {

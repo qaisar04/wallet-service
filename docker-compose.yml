@@ -1,10 +1,10 @@
 version: '3'
 services:
   base-project-pg:
-    image: postgres:13.3
+    image: postgres:14
     environment:
       POSTGRES_USER: qaisar
       POSTGRES_PASSWORD: walletservice
       POSTGRES_DB: wallet_service_db
     ports:
-      - '5432:5432'
+      - '5433:5433'

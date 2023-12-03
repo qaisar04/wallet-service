@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 public class TransactionRequest {
 
     @NotNull
-    private String playerUsername;
+    private String username;
 
     @NotNull
     @DecimalMin(message = "Amount must not less than 0.0!", value = "0.0", inclusive = false)

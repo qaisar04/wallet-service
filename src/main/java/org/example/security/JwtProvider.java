@@ -6,7 +6,6 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.example.core.domain.Player;
-import org.example.core.service.PlayerService;
 import org.example.сonfiguration.SecurityConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -52,13 +51,13 @@ public class JwtProvider {
                 .getPayload();
     }
 
-    public boolean validateToken(String token, Player player) {
+    public boolean validateToken(String token, String playerUsername) {
         String username = extractUsername(token);
-        return (username.equals(player.getUsername()))
+        return (username.equals(playerUsername))
                && !isTokenExpired(token);
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
@@ -79,17 +78,6 @@ public class JwtProvider {
         Claims claims = getAllClaims(token);
         return func.apply(claims);
     }
-
-    // TODO: chahge this method
-    public boolean isValidUsername(String token) {
-        try {
-            String username = extractUsername(token);
-            return isTokenExpired(token);
-        } catch (Exception e) {
-            return true;
-        }
-    }
-
 
     private SecretKey getPrivateKey() {
         byte[] key = Decoders.BASE64.decode(SECURE_PASS);

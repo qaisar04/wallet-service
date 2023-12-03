@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.core.domain.types.TransactionType;
+import org.example.util.UuidConverter;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -27,8 +29,8 @@ public class Transaction {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "transaction_id")
-    private UUID transactionId;
+    @Column(name = "id")
+    private Long transactionId;
 
     /**
      * The type of the transaction (e.g., credit or debit).
@@ -49,6 +51,10 @@ public class Transaction {
 
     @Column(name = "balance_after")
     private BigDecimal balanceAfter;
+
+    @Convert(converter = UuidConverter.class)
+    @Column(name = "transaction_identifier", unique = true)
+    private UUID transactionIdentifier;
 
     /**
      * The unique identifier of the player involved in the transaction.

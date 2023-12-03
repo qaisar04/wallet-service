@@ -42,6 +42,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         transaction.setAmount(amount);
         transaction.setBalanceBefore(playerBalance);
+        transaction.setTransactionIdentifier(transactionIdentifier);
 
         BigDecimal result = playerBalance.add(amount);
         transaction.setBalanceAfter(result);
@@ -64,6 +65,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         transaction.setAmount(amount);
         transaction.setBalanceBefore(playerBalance);
+        transaction.setTransactionIdentifier(transactionIdentifier);
 
         BigDecimal result = playerBalance.subtract(amount);
         transaction.setBalanceAfter(result);
@@ -80,7 +82,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private void checkTransaction(UUID transactionIdentifier) {
-        if (transactionRepository.findByTransactionId(transactionIdentifier).isPresent()) {
+        if (transactionRepository.findByTransactionIdentifier(transactionIdentifier).isPresent()) {
             throw new TransactionAlreadyExistsException("Transaction with ID " + transactionIdentifier + " already exists.");
         }
     }

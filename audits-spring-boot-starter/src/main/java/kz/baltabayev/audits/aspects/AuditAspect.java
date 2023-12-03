@@ -1,12 +1,16 @@
 package kz.baltabayev.audits.aspects;
 
 import kz.baltabayev.audits.domain.Audit;
-import kz.baltabayev.audits.service.AuditService;
+import kz.baltabayev.audits.repository.AuditRepository;
+import kz.baltabayev.audits.service.AuditServiceLogging;
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 
@@ -15,37 +19,34 @@ import static kz.baltabayev.audits.domain.types.AuditType.FAIL;
 import static kz.baltabayev.audits.domain.types.AuditType.SUCCESS;
 
 @Aspect
+@RequiredArgsConstructor
 public class AuditAspect {
 
-    private final AuditService auditService;
+    private final AuditRepository auditRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(AuditAspect.class);
 
-    public AuditAspect(AuditService auditService) {
-        this.auditService = auditService;
-    }
-
-    @Pointcut("execution(public * kz.baltabayev.audits.manager.PlayerManager.registerPlayer(..))")
+    @Pointcut("execution(public * kz.baltabayev.audits.service.SecurityServiceLogging.register(..))")
     public void registrationPointcut() {
     }
 
-    @Pointcut("execution(public * kz.baltabayev.audits.manager.PlayerManager.authenticatePlayer(..))")
+    @Pointcut("execution(public * kz.baltabayev.audits.service.SecurityServiceLogging.authorization(..))")
     public void authenticationPointcut() {
     }
 
-    @Pointcut("execution(public * kz.baltabayev.audits.manager.PlayerManager.getBalance(..))")
+    @Pointcut("execution(public * kz.baltabayev.audits.service.PlayerServiceLogging.getPlayerBalance(..))")
     public void getBalancePointcut() {
     }
 
-    @Pointcut("execution(public * kz.baltabayev.audits.manager.PlayerManager.creditWithTransactionId(..))")
-    public void creditWithTransactionIdPointcut() {
+    @Pointcut("execution(public * kz.baltabayev.audits.service.TransactionServiceLogging.credit(..))")
+    public void creditPointcut() {
     }
 
-    @Pointcut("execution(public * kz.baltabayev.audits.manager.PlayerManager.debitWithTransactionId(..))")
-    public void debitWithTransactionIdPointcut() {
+    @Pointcut("execution(public * kz.baltabayev.audits.service.TransactionServiceLogging.debit(..))")
+    public void debitPointcut() {
     }
 
-    @Pointcut("execution(public * kz.baltabayev.audits.manager.TransactionManager.viewTransactionHistory(..))")
+    @Pointcut("execution(public * kz.baltabayev.audits.service.TransactionServiceLogging.getPlayerHistory(..))")
     public void viewTransactionHistoryPointcut() {
     }
 
@@ -65,7 +66,7 @@ public class AuditAspect {
                         .actionType(REGISTRATION)
                         .playerFullName(username)
                         .build();
-                auditService.save(audit);
+                auditRepository.save(audit);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 logger.error(String.valueOf(e));
             }
@@ -88,7 +89,7 @@ public class AuditAspect {
                         .actionType(REGISTRATION)
                         .playerFullName(username)
                         .build();
-                auditService.save(audit);
+                auditRepository.save(audit);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 logger.error(String.valueOf(e));
             }
@@ -111,7 +112,7 @@ public class AuditAspect {
                         .actionType(AUTHORIZATION)
                         .playerFullName(username)
                         .build();
-                auditService.save(audit);
+                auditRepository.save(audit);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 logger.error(String.valueOf(e));
             }
@@ -134,7 +135,7 @@ public class AuditAspect {
                         .actionType(AUTHORIZATION)
                         .playerFullName(username)
                         .build();
-                auditService.save(audit);
+                auditRepository.save(audit);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 logger.error(String.valueOf(e));
             }
@@ -157,7 +158,7 @@ public class AuditAspect {
                         .actionType(BALANCE_INQUIRY)
                         .playerFullName(username)
                         .build();
-                auditService.save(audit);
+                auditRepository.save(audit);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 logger.error(String.valueOf(e));
             }
@@ -180,14 +181,14 @@ public class AuditAspect {
                         .actionType(BALANCE_INQUIRY)
                         .playerFullName(username)
                         .build();
-                auditService.save(audit);
+                auditRepository.save(audit);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 logger.error(String.valueOf(e));
             }
         }
     }
 
-    @AfterReturning(pointcut = "creditWithTransactionIdPointcut()", returning = "result")
+    @AfterReturning(pointcut = "creditPointcut()", returning = "result")
     public void afterSuccessfulCredit(JoinPoint joinPoint, ResponseEntity<?> result) {
         Object[] args = joinPoint.getArgs();
         if (args.length > 0) {
@@ -203,14 +204,14 @@ public class AuditAspect {
                         .actionType(CREDIT_TRANSACTION)
                         .playerFullName(username)
                         .build();
-                auditService.save(audit);
+                auditRepository.save(audit);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 logger.error(String.valueOf(e));
             }
         }
     }
 
-    @AfterThrowing(pointcut = "creditWithTransactionIdPointcut()", throwing = "exception")
+    @AfterThrowing(pointcut = "creditPointcut()", throwing = "exception")
     public void afterFailedCredit(JoinPoint joinPoint, Throwable exception) {
         Object[] args = joinPoint.getArgs();
         if (args.length > 0) {
@@ -226,14 +227,14 @@ public class AuditAspect {
                         .actionType(CREDIT_TRANSACTION)
                         .playerFullName(username)
                         .build();
-                auditService.save(audit);
+                auditRepository.save(audit);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 logger.error(String.valueOf(e));
             }
         }
     }
 
-    @AfterReturning(pointcut = "debitWithTransactionIdPointcut()", returning = "result")
+    @AfterReturning(pointcut = "debitPointcut()", returning = "result")
     public void afterSuccessfulDebit(JoinPoint joinPoint, ResponseEntity<?> result) {
         Object[] args = joinPoint.getArgs();
         if (args.length > 0) {
@@ -249,14 +250,14 @@ public class AuditAspect {
                         .actionType(DEBIT_TRANSACTION)
                         .playerFullName(username)
                         .build();
-                auditService.save(audit);
+                auditRepository.save(audit);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 logger.error(String.valueOf(e));
             }
         }
     }
 
-    @AfterThrowing(pointcut = "debitWithTransactionIdPointcut()", throwing = "exception")
+    @AfterThrowing(pointcut = "debitPointcut()", throwing = "exception")
     public void afterFailedDebit(JoinPoint joinPoint, Throwable exception) {
         Object[] args = joinPoint.getArgs();
         if (args.length > 0) {
@@ -272,7 +273,7 @@ public class AuditAspect {
                         .actionType(DEBIT_TRANSACTION)
                         .playerFullName(username)
                         .build();
-                auditService.save(audit);
+                auditRepository.save(audit);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 logger.error(String.valueOf(e));
             }
@@ -295,7 +296,7 @@ public class AuditAspect {
                         .actionType(VIEW_TRANSACTION_HISTORY)
                         .playerFullName(username)
                         .build();
-                auditService.save(audit);
+                auditRepository.save(audit);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 logger.error(String.valueOf(e));
             }
@@ -318,7 +319,7 @@ public class AuditAspect {
                         .actionType(VIEW_TRANSACTION_HISTORY)
                         .playerFullName(username)
                         .build();
-                auditService.save(audit);
+                auditRepository.save(audit);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 logger.error(String.valueOf(e));
             }

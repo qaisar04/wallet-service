@@ -4,15 +4,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.core.domain.Player;
-import org.example.core.domain.Transaction;
 import org.example.core.service.AuditService;
 import org.example.core.service.PlayerService;
 import org.example.core.service.TransactionService;
 import org.example.dto.AuditDTO;
 import org.example.dto.TransactionRequest;
 import org.example.dto.TransactionResponse;
-import org.example.logging.aop.annotations.LoggableInfo;
-import org.example.mapper.PlayerMapper;
 import org.example.mapper.TransactionMapper;
 import org.example.security.JwtProvider;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +40,6 @@ import java.util.UUID;
  */
 @Tag(name = "Base functional API", description = "API for player registration, getting transaction history and all audits")
 @RestController
-@LoggableInfo
 @RequiredArgsConstructor
 @RequestMapping(value = "/players", produces = "application/json")
 public class PlayerController {
@@ -66,12 +62,12 @@ public class PlayerController {
             @RequestHeader("Authorization") String token) {
         Map<String, String> response = new HashMap<>();
 
-        if (!jwtProvider.isValidUsername(token)) {
+        token = token.substring(7);
+        if (jwtProvider.isTokenExpired(token)) {
             response.put("error", "Incorrect login.");
             return ResponseEntity.badRequest()
                     .body(response);
         }
-        token = token.substring(7);
 
         String username = jwtProvider.extractUsername(token);
         Player player = playerService.findByUsername(username);
@@ -91,10 +87,9 @@ public class PlayerController {
             @RequestHeader("Authorization") String token) {
         Map<String, Object> response = new HashMap<>();
 
-        if (!jwtProvider.isValidUsername(token)) {
+        if (jwtProvider.isTokenExpired(token)) {
             response.put("error", "Incorrect login.");
-            return ResponseEntity.badRequest()
-                    .body(response);
+            return ResponseEntity.badRequest().body(response);
         }
 
         token = token.substring(7);
@@ -118,10 +113,11 @@ public class PlayerController {
     public ResponseEntity<Map<String, Object>> viewAuditHistory(
             @RequestHeader("Authorization") String token) {
         Map<String, Object> response = new HashMap<>();
-        if (!jwtProvider.isValidUsername(token)) {
+
+        token = token.substring(7);
+        if (jwtProvider.isTokenExpired(token)) {
             response.put("error", "Access denied. Log in with admin account.");
-            return ResponseEntity.badRequest()
-                    .body(response);
+            return ResponseEntity.badRequest().body(response);
         }
 
         List<AuditDTO> auditHistory = auditService.getAuditHistory();
@@ -144,14 +140,14 @@ public class PlayerController {
             @RequestHeader("Authorization") String token) {
         Map<String, String> response = new HashMap<>();
 
-        if (!jwtProvider.isValidUsername(token)) {
+        token = token.substring(7);
+        if (!jwtProvider.validateToken(token, transaction.getUsername())) {
             response.put("error", "Incorrect login.");
             return ResponseEntity.badRequest()
                     .body(response);
         }
 
-        token = token.substring(7);
-        Player player = playerService.findByUsername(transaction.getPlayerUsername());
+        Player player = playerService.findByUsername(transaction.getUsername());
         transactionService.credit(player.getId(), transaction.getAmount(), UUID.randomUUID());
         response.put("message", "Транзакция успешно завершена");
         return ResponseEntity.ok(response);
@@ -164,34 +160,34 @@ public class PlayerController {
             @RequestHeader("Authorization") String token) {
         Map<String, String> response = new HashMap<>();
 
-        if (!jwtProvider.isValidUsername(token)) {
+        token = token.substring(7);
+        if (!jwtProvider.validateToken(token, transaction.getUsername())) {
             response.put("error", "Incorrect login.");
             return ResponseEntity.badRequest()
                     .body(response);
         }
 
-        token = token.substring(7);
-        Player player = playerService.findByUsername(transaction.getPlayerUsername());
-        transactionService.credit(player.getId(), transaction.getAmount(), UUID.randomUUID());
+        Player player = playerService.findByUsername(transaction.getUsername());
+        transactionService.debit(player.getId(), transaction.getAmount(), UUID.randomUUID());
         response.put("message", "Транзакция успешно завершена");
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/info")
-    public ResponseEntity<Map<String, String>> viewPlayerInfo(
+    public ResponseEntity<Map<String, Object>> viewPlayerInfo(
             @RequestHeader("Authorization") String token) {
-        Map<String, String> response = new HashMap<>();
-
-        if (jwtProvider.isValidUsername(token)) {
-            response.put("error", "Incorrect login.");
-            return ResponseEntity.badRequest()
-                    .body(response);
-        }
+        Map<String, Object> response = new HashMap<>();
 
         token = token.substring(7);
+        if (jwtProvider.isTokenExpired(token)) {
+            response.put("error", "Incorrect login.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+
         String username = jwtProvider.extractUsername(token);
         Player player = playerService.findByUsername(username);
-        response.put("info", player.toString());
+        response.put("info", player);
         return ResponseEntity.ok(response);
     }
 
